@@ -109,14 +109,38 @@ public final class HudRenderer {
             lines.add("KEYS " + keys);
         }
 
-        int x = 8, y = 8;
-        int lineHeight = ClientConfig.compactHud ? 10 : 12;
+        if (lines.isEmpty()) return;
+        int x = 10, y = 10;
+        int rowHeight = ClientConfig.compactHud ? 12 : 15;
+        int padX = 8;
+        int maxWidth = 0;
+        for (String line : lines) maxWidth = Math.max(maxWidth, client.font.width(line));
+        int panelWidth = Math.min(client.getWindow().getGuiScaledWidth() - 20, maxWidth + padX * 2 + 4);
+        int headerHeight = 23;
+        int panelHeight = headerHeight + lines.size() * rowHeight + 8;
+        int screenHeight = client.getWindow().getGuiScaledHeight();
+        if (y + panelHeight > screenHeight - 8) panelHeight = screenHeight - y - 8;
+        graphics.fill(x, y, x + panelWidth, y + panelHeight, 0xD909111E);
+        graphics.fill(x, y, x + panelWidth, y + 2, 0xFF4B9EFF);
+        graphics.fill(x, y + 2, x + 2, y + panelHeight, 0xFF4B9EFF);
+        graphics.drawString(client.font, "LIGHTCLIENT", x + padX, y + 7, 0xFFF5F8FF, false);
+        graphics.drawString(client.font, "LIVE HUD", x + panelWidth - client.font.width("LIVE HUD") - padX, y + 7, 0xFF69D8FF, false);
+        graphics.fill(x + padX, y + 20, x + panelWidth - padX, y + 21, 0xFF29384D);
+        int rowY = y + headerHeight;
         for (String line : lines) {
-            int lineWidth = client.font.width(line);
-            graphics.fill(x - 4, y - 2, x + lineWidth + 5, y + lineHeight - 1, 0xB509101C);
-            graphics.fill(x - 4, y - 2, x - 2, y + lineHeight - 1, 0xFF258BFF);
-            graphics.drawString(client.font, Component.literal(line), x, y, 0xFFF1F5FF, false);
-            y += lineHeight + 2;
+            if (rowY + rowHeight > y + panelHeight - 3) break;
+            graphics.fill(x + 5, rowY, x + panelWidth - 5, rowY + rowHeight - 1, 0x66203146);
+            int split = line.indexOf(' ');
+            String label = split > 0 ? line.substring(0, split) : line;
+            String value = split > 0 ? line.substring(split + 1) : "";
+            graphics.drawString(client.font, Component.literal(label), x + padX, rowY + 3, 0xFF69D8FF, false);
+            int valueX = x + padX + client.font.width(label) + 5;
+            int available = x + panelWidth - padX - valueX;
+            if (available > 0) {
+                while (client.font.width(value) > available && value.length() > 3) value = value.substring(0, value.length() - 2) + "…";
+                graphics.drawString(client.font, Component.literal(value), valueX, rowY + 3, 0xFFF1F5FF, false);
+            }
+            rowY += rowHeight;
         }
     }
 
