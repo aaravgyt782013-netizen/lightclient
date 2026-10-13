@@ -12,13 +12,13 @@ import java.util.function.Consumer;
 
 public final class ClickGuiScreen extends Screen {
     private static final int BLUE = 0xFF258BFF;
-    private static final int PANEL_WIDTH = 390;
-    private static final int PANEL_HEIGHT = 300;
+    private static final int PANEL_WIDTH = 430;
+    private static final int PANEL_HEIGHT = 330;
     private final Screen parent;
     private Category category = Category.HUD;
 
     private enum Category {
-        HUD("HUD"), COMBAT("Combat"), VISUALS("Visuals"), PERFORMANCE("Performance"), GENERAL("General");
+        HUD("HUD"), COMBAT("Combat"), VISUALS("Visuals"), ITEMS("Items"), PERFORMANCE("Performance"), GENERAL("General");
         final String label;
         Category(String label) { this.label = label; }
     }
@@ -37,7 +37,7 @@ public final class ClickGuiScreen extends Screen {
         int top = (height - panelHeight) / 2;
         int tabY = top + 48;
         int gap = 3;
-        int tabWidth = (panelWidth - 28 - gap * 4) / 5;
+        int tabWidth = (panelWidth - 28 - gap * (Category.values().length - 1)) / Category.values().length;
         int tabX = left + 14;
         for (int i = 0; i < Category.values().length; i++) {
             Category tab = Category.values()[i];
@@ -57,22 +57,37 @@ public final class ClickGuiScreen extends Screen {
                 addFeature("FPS Counter", "Current frames per second", () -> ClientConfig.showFps, v -> ClientConfig.showFps = v, left, y); y += 26;
                 addFeature("Ping Counter", "Server latency in milliseconds", () -> ClientConfig.showPing, v -> ClientConfig.showPing = v, left, y); y += 26;
                 addFeature("Coordinates", "Player XYZ coordinates", () -> ClientConfig.showCoordinates, v -> ClientConfig.showCoordinates = v, left, y); y += 26;
-                addFeature("Potion Effects", "Active potion effect count", () -> ClientConfig.showEffects, v -> ClientConfig.showEffects = v, left, y);
+                addFeature("Direction", "Cardinal direction faced", () -> ClientConfig.showDirection, v -> ClientConfig.showDirection = v, left, y);
             }
             case COMBAT -> {
                 addFeature("CPS Counter", "Recent attack input count", () -> ClientConfig.showCps, v -> ClientConfig.showCps = v, left, y); y += 26;
-                addFeature("Keystrokes", "Movement, jump and sprint keys", () -> ClientConfig.showKeystrokes, v -> ClientConfig.showKeystrokes = v, left, y);
-                addInfo(left, y + 30, panelWidth, "PvP information only; no combat automation.");
+                addFeature("Keystrokes", "Movement, jump and sprint keys", () -> ClientConfig.showKeystrokes, v -> ClientConfig.showKeystrokes = v, left, y); y += 26;
+                addFeature("Armor Durability", "Durability percentage for equipped armor", () -> ClientConfig.showArmorDurability, v -> ClientConfig.showArmorDurability = v, left, y); y += 26;
+                addFeature("Potion Details", "Names and remaining duration of active effects", () -> ClientConfig.showPotionDetails, v -> ClientConfig.showPotionDetails = v, left, y); y += 26;
+                addFeature("Target Info", "Health of the entity under the crosshair", () -> ClientConfig.showTargetInfo, v -> ClientConfig.showTargetInfo = v, left, y);
             }
             case VISUALS -> {
-                addFeature("Held Item Counter", "Show held item name and stack count", () -> ClientConfig.showHeldItem, v -> ClientConfig.showHeldItem = v, left, y); y += 26;
-                addFeature("Compact HUD", "Use tighter HUD spacing", () -> ClientConfig.compactHud, v -> ClientConfig.compactHud = v, left, y);
-                addInfo(left, y + 30, panelWidth, "More visual modules can be added in future updates.");
+                addFeature("Compact HUD", "Use tighter HUD spacing", () -> ClientConfig.compactHud, v -> ClientConfig.compactHud = v, left, y); y += 26;
+                addFeature("Biome", "Current biome name", () -> ClientConfig.showBiome, v -> ClientConfig.showBiome = v, left, y); y += 26;
+                addFeature("Clock", "Local system clock", () -> ClientConfig.showClock, v -> ClientConfig.showClock = v, left, y); y += 26;
+                addFeature("Fullbright", "Reserved: lighting override requires renderer integration", () -> ClientConfig.fullbright, v -> ClientConfig.fullbright = v, left, y);
+                addInfo(left, y + 27, panelWidth, "Fullbright toggle is saved but not active yet.");
+            }
+            case ITEMS -> {
+                addFeature("Held Item", "Name and stack count", () -> ClientConfig.showHeldItem, v -> ClientConfig.showHeldItem = v, left, y); y += 26;
+                addFeature("Item Durability", "Remaining durability of held tools and armor", () -> ClientConfig.showItemDurability, v -> ClientConfig.showItemDurability = v, left, y); y += 26;
+                addFeature("Food Preview", "Nutrition and saturation for held food", () -> ClientConfig.showFoodPreview, v -> ClientConfig.showFoodPreview = v, left, y); y += 26;
+                addFeature("Arrow Counter", "Count arrows in inventory", () -> ClientConfig.showArrows, v -> ClientConfig.showArrows = v, left, y); y += 26;
+                addFeature("Inventory Counters", "Golden apples, pearls and totems", () -> ClientConfig.showInventoryCounters, v -> ClientConfig.showInventoryCounters = v, left, y);
             }
             case PERFORMANCE -> {
-                addInfo(left, y, panelWidth, "Performance controls are not implemented yet.");
-                addInfo(left, y + 24, panelWidth, "Use Minecraft video settings or compatible optimization mods.");
-                addInfo(left, y + 48, panelWidth, "Ping depends on your network and server location.");
+                addInfo(left, y, panelWidth, "Performance options are being developed.");
+                addInfo(left, y + 26, panelWidth, "For now, use compatible renderer optimization mods.");
+                addInfo(left, y + 52, panelWidth, "No FPS multiplier is promised; results vary by device.");
+                addFeature("Low Fire", "Reserved: requires render-layer integration", () -> ClientConfig.lowFire, v -> ClientConfig.lowFire = v, left, y + 84);
+                addFeature("Hide Potion Particles", "Reserved: requires particle filtering", () -> ClientConfig.hidePotionParticles, v -> ClientConfig.hidePotionParticles = v, left, y + 110);
+                addFeature("Hide Explosion Particles", "Reserved: requires particle filtering", () -> ClientConfig.hideExplosionParticles, v -> ClientConfig.hideExplosionParticles = v, left, y + 136);
+                addInfo(left, y + 164, panelWidth, "These three reserved toggles are not active yet.");
             }
             case GENERAL -> {
                 addFeature("Master HUD", "Show or hide every LightClient HUD widget", () -> ClientConfig.hudEnabled, v -> ClientConfig.hudEnabled = v, left, y); y += 26;
