@@ -53,7 +53,7 @@ public final class ClickGuiScreen extends Screen {
         switch (category) {
             case HUD -> {
                 addFeature("Master HUD", "Show or hide all LightClient HUD widgets",
-                        () -> ClientConfig.hudEnabled, v -> ClientConfig.hudEnabled = v, left, rowY++);
+                        () -> ClientConfig.hudEnabled, v -> ClientConfig.hudEnabled = v, left, rowY += 26);
                 addFeature("Health", "Player health display",
                         () -> ClientConfig.showHealth, v -> ClientConfig.showHealth = v, left, rowY++);
                 addFeature("Hunger", "Food level display",
