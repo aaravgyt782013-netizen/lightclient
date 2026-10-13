@@ -3,6 +3,7 @@ package com.lightclient;
 import com.lightclient.config.ClientConfig;
 import com.lightclient.hud.HudRenderer;
 import com.lightclient.ui.ClickGuiScreen;
+import com.lightclient.ui.LightClientHomeScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -41,10 +42,16 @@ public final class LightClient implements ClientModInitializer {
         });
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            if (screen instanceof TitleScreen || screen instanceof PauseScreen) {
-                int buttonWidth = 120;
+            if (screen instanceof TitleScreen) {
+                client.execute(() -> {
+                    if (client.screen == screen) {
+                        client.setScreen(new LightClientHomeScreen());
+                    }
+                });
+            } else if (screen instanceof PauseScreen) {
+                int buttonWidth = 140;
                 int x = (scaledWidth - buttonWidth) / 2;
-                int y = Math.max(4, scaledHeight - 32);
+                int y = Math.max(4, scaledHeight - 30);
                 screen.addRenderableWidget(Button.builder(
                         Component.literal("LightClient Settings"),
                         button -> client.setScreen(new ClickGuiScreen(screen))
