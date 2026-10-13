@@ -27,14 +27,14 @@ public final class ModuleSettingsScreen extends Screen {
             case "Master HUD" -> { enabled = () -> ClientConfig.hudEnabled; setEnabled = v -> ClientConfig.hudEnabled = v; }
             case "Health" -> { enabled = () -> ClientConfig.showHealth; setEnabled = v -> ClientConfig.showHealth = v; }
             case "Hunger" -> { enabled = () -> ClientConfig.showHunger; setEnabled = v -> ClientConfig.showHunger = v; }
-            case "Armor" -> { enabled = () -> ClientConfig.showArmor; setEnabled = v -> ClientConfig.showArmor = v; }
+            case "Armor", "Armor Status" -> { enabled = () -> ClientConfig.showArmor; setEnabled = v -> ClientConfig.showArmor = v; }
             case "FPS Counter" -> { enabled = () -> ClientConfig.showFps; setEnabled = v -> ClientConfig.showFps = v; }
             case "Coordinates" -> { enabled = () -> ClientConfig.showCoordinates; setEnabled = v -> ClientConfig.showCoordinates = v; }
             case "Potion Effects" -> { enabled = () -> ClientConfig.showEffects; setEnabled = v -> ClientConfig.showEffects = v; }
             case "Ping Counter" -> { enabled = () -> ClientConfig.showPing; setEnabled = v -> ClientConfig.showPing = v; }
             case "CPS Counter" -> { enabled = () -> ClientConfig.showCps; setEnabled = v -> ClientConfig.showCps = v; }
             case "Keystrokes" -> { enabled = () -> ClientConfig.showKeystrokes; setEnabled = v -> ClientConfig.showKeystrokes = v; }
-            case "Held Item Counter" -> { enabled = () -> ClientConfig.showHeldItem; setEnabled = v -> ClientConfig.showHeldItem = v; }
+            case "Held Item Counter", "Held Item" -> { enabled = () -> ClientConfig.showHeldItem; setEnabled = v -> ClientConfig.showHeldItem = v; }
             case "Compact HUD" -> { enabled = () -> ClientConfig.compactHud; setEnabled = v -> ClientConfig.compactHud = v; }
             case "Armor Durability" -> { enabled = () -> ClientConfig.showArmorDurability; setEnabled = v -> ClientConfig.showArmorDurability = v; }
             case "Arrow Counter" -> { enabled = () -> ClientConfig.showArrows; setEnabled = v -> ClientConfig.showArrows = v; }
