@@ -44,7 +44,7 @@ public final class HudRenderer {
         if (ClientConfig.showDirection) lines.add("FACING " + player.getDirection().getName().toUpperCase(Locale.ROOT));
         if (ClientConfig.showBiome && client.level != null) {
             String biome = client.level.getBiome(player.blockPosition()).unwrapKey()
-                    .map(key -> key.location().getPath().replace('_', ' ')).orElse("unknown");
+                    .map(key -> key.identifier().getPath().replace('_', ' ')).orElse("unknown");
             lines.add("BIOME " + biome);
         }
         if (ClientConfig.showEffects) lines.add("EFFECTS " + player.getActiveEffects().size());
@@ -114,7 +114,7 @@ public final class HudRenderer {
     private static void addArmorDurability(List<String> lines, Player player) {
         String[] names = {"BOOTS", "LEGS", "CHEST", "HELMET"};
         int index = 0;
-        for (ItemStack stack : player.getInventory().armor) {
+        for (ItemStack stack : player.getArmorSlots()) {
             if (!stack.isEmpty() && stack.isDamageableItem()) {
                 int remaining = Math.max(0, stack.getMaxDamage() - stack.getDamageValue());
                 int percent = Math.round(100.0f * remaining / stack.getMaxDamage());
