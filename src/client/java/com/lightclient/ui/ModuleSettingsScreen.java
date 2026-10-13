@@ -36,6 +36,20 @@ public final class ModuleSettingsScreen extends Screen {
             case "Keystrokes" -> { enabled = () -> ClientConfig.showKeystrokes; setEnabled = v -> ClientConfig.showKeystrokes = v; }
             case "Held Item Counter" -> { enabled = () -> ClientConfig.showHeldItem; setEnabled = v -> ClientConfig.showHeldItem = v; }
             case "Compact HUD" -> { enabled = () -> ClientConfig.compactHud; setEnabled = v -> ClientConfig.compactHud = v; }
+            case "Armor Durability" -> { enabled = () -> ClientConfig.showArmorDurability; setEnabled = v -> ClientConfig.showArmorDurability = v; }
+            case "Arrow Counter" -> { enabled = () -> ClientConfig.showArrows; setEnabled = v -> ClientConfig.showArrows = v; }
+            case "Inventory Counters" -> { enabled = () -> ClientConfig.showInventoryCounters; setEnabled = v -> ClientConfig.showInventoryCounters = v; }
+            case "Potion Details" -> { enabled = () -> ClientConfig.showPotionDetails; setEnabled = v -> ClientConfig.showPotionDetails = v; }
+            case "Direction" -> { enabled = () -> ClientConfig.showDirection; setEnabled = v -> ClientConfig.showDirection = v; }
+            case "Biome" -> { enabled = () -> ClientConfig.showBiome; setEnabled = v -> ClientConfig.showBiome = v; }
+            case "Clock" -> { enabled = () -> ClientConfig.showClock; setEnabled = v -> ClientConfig.showClock = v; }
+            case "Item Durability" -> { enabled = () -> ClientConfig.showItemDurability; setEnabled = v -> ClientConfig.showItemDurability = v; }
+            case "Food Preview" -> { enabled = () -> ClientConfig.showFoodPreview; setEnabled = v -> ClientConfig.showFoodPreview = v; }
+            case "Target Info" -> { enabled = () -> ClientConfig.showTargetInfo; setEnabled = v -> ClientConfig.showTargetInfo = v; }
+            case "Low Fire" -> { enabled = () -> ClientConfig.lowFire; setEnabled = v -> ClientConfig.lowFire = v; }
+            case "Hide Potion Particles" -> { enabled = () -> ClientConfig.hidePotionParticles; setEnabled = v -> ClientConfig.hidePotionParticles = v; }
+            case "Hide Explosion Particles" -> { enabled = () -> ClientConfig.hideExplosionParticles; setEnabled = v -> ClientConfig.hideExplosionParticles = v; }
+            case "Fullbright" -> { enabled = () -> ClientConfig.fullbright; setEnabled = v -> ClientConfig.fullbright = v; }
             default -> { enabled = () -> ClientConfig.hudEnabled; setEnabled = v -> ClientConfig.hudEnabled = v; }
         }
     }
