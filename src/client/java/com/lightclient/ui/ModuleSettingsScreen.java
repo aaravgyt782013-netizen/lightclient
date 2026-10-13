@@ -30,8 +30,13 @@ public final class ModuleSettingsScreen extends Screen {
             case "Armor" -> { enabled = () -> ClientConfig.showArmor; setEnabled = v -> ClientConfig.showArmor = v; }
             case "FPS Counter" -> { enabled = () -> ClientConfig.showFps; setEnabled = v -> ClientConfig.showFps = v; }
             case "Coordinates" -> { enabled = () -> ClientConfig.showCoordinates; setEnabled = v -> ClientConfig.showCoordinates = v; }
-            case "Effect Counter" -> { enabled = () -> ClientConfig.showEffects; setEnabled = v -> ClientConfig.showEffects = v; }
-            default -> { enabled = () -> ClientConfig.compactHud; setEnabled = v -> ClientConfig.compactHud = v; }
+            case "Potion Effects" -> { enabled = () -> ClientConfig.showEffects; setEnabled = v -> ClientConfig.showEffects = v; }
+            case "Ping Counter" -> { enabled = () -> ClientConfig.showPing; setEnabled = v -> ClientConfig.showPing = v; }
+            case "CPS Counter" -> { enabled = () -> ClientConfig.showCps; setEnabled = v -> ClientConfig.showCps = v; }
+            case "Keystrokes" -> { enabled = () -> ClientConfig.showKeystrokes; setEnabled = v -> ClientConfig.showKeystrokes = v; }
+            case "Held Item Counter" -> { enabled = () -> ClientConfig.showHeldItem; setEnabled = v -> ClientConfig.showHeldItem = v; }
+            case "Compact HUD" -> { enabled = () -> ClientConfig.compactHud; setEnabled = v -> ClientConfig.compactHud = v; }
+            default -> { enabled = () -> ClientConfig.hudEnabled; setEnabled = v -> ClientConfig.hudEnabled = v; }
         }
     }
 
@@ -47,13 +52,15 @@ public final class ModuleSettingsScreen extends Screen {
             ClientConfig.save();
             b.setMessage(Component.literal(moduleName + "  [" + (value ? "ENABLED" : "DISABLED") + "]"));
         }).bounds(left + 14, top + 78, panelWidth - 28, 22).build());
-        addRenderableWidget(Button.builder(Component.literal("Compact HUD spacing  [" +
-                (ClientConfig.compactHud ? "ON" : "OFF") + "]"), b -> {
-            ClientConfig.compactHud = !ClientConfig.compactHud;
-            ClientConfig.save();
-            b.setMessage(Component.literal("Compact HUD spacing  [" +
-                    (ClientConfig.compactHud ? "ON" : "OFF") + "]"));
-        }).bounds(left + 14, top + 104, panelWidth - 28, 22).build());
+        if (moduleName.equals("Compact HUD")) {
+            addRenderableWidget(Button.builder(Component.literal("Compact HUD spacing  [" +
+                    (ClientConfig.compactHud ? "ON" : "OFF") + "]"), b -> {
+                ClientConfig.compactHud = !ClientConfig.compactHud;
+                ClientConfig.save();
+                b.setMessage(Component.literal("Compact HUD spacing  [" +
+                        (ClientConfig.compactHud ? "ON" : "OFF") + "]"));
+            }).bounds(left + 14, top + 104, panelWidth - 28, 22).build());
+        }
         addRenderableWidget(Button.builder(Component.literal("Back to menu"),
                 b -> Minecraft.getInstance().setScreen(parent))
                 .bounds(left + 14, top + 134, panelWidth - 28, 22).build());
