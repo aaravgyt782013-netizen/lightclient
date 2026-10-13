@@ -2,6 +2,7 @@ package com.lightclient;
 
 import com.lightclient.config.ClientConfig;
 import com.lightclient.hud.HudRenderer;
+import com.lightclient.hud.ClientStats;
 import com.lightclient.ui.ClickGuiScreen;
 import com.lightclient.ui.LightClientHomeScreen;
 import net.fabricmc.api.ClientModInitializer;
@@ -29,6 +30,7 @@ public final class LightClient implements ClientModInitializer {
                 GLFW.GLFW_KEY_RIGHT_SHIFT, KeyMapping.Category.MISC));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            ClientStats.tick(client);
             while (openMenu.consumeClick()) {
                 if (client.player != null) client.setScreen(new ClickGuiScreen(client.screen));
             }
