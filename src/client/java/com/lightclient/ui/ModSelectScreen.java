@@ -29,8 +29,8 @@ public final class ModSelectScreen extends Screen {
                 .bounds(12, height - 32, 90, 20).build());
     }
 
-    @Override public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        scroll = Math.max(0, Math.min(Math.max(0, mods.size() - 1), scroll - (int) delta * 3));
+    @Override public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        scroll = Math.max(0, Math.min(Math.max(0, mods.size() - 1), scroll - (int) scrollY * 3));
         return true;
     }
 
