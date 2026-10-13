@@ -18,7 +18,7 @@ public final class ClickGuiScreen extends Screen {
     private Category category = Category.HUD;
 
     private enum Category {
-        HUD("HUD"), PERFORMANCE("Performance"), VISUALS("Visuals"), GENERAL("General");
+        HUD("HUD"), COMBAT("Combat"), VISUALS("Visuals"), PERFORMANCE("Performance"), GENERAL("General");
         final String label;
         Category(String label) { this.label = label; }
     }
@@ -36,86 +36,70 @@ public final class ClickGuiScreen extends Screen {
         int left = (width - panelWidth) / 2;
         int top = (height - panelHeight) / 2;
         int tabY = top + 48;
-        int gap = 4;
-        int tabWidth = (panelWidth - 28 - gap * 3) / 4;
+        int gap = 3;
+        int tabWidth = (panelWidth - 28 - gap * 4) / 5;
         int tabX = left + 14;
         for (int i = 0; i < Category.values().length; i++) {
             Category tab = Category.values()[i];
             int x = tabX + i * (tabWidth + gap);
-            addRenderableWidget(Button.builder(Component.literal(
-                    (category == tab ? "◆ " : "") + tab.label), b -> {
+            addRenderableWidget(Button.builder(Component.literal((category == tab ? "• " : "") + tab.label), b -> {
                 category = tab;
                 init();
             }).bounds(x, tabY, tabWidth, 20).build());
         }
 
-        int rowY = top + 78;
+        int y = top + 78;
         switch (category) {
             case HUD -> {
-                addFeature("Master HUD", "Show or hide all LightClient HUD widgets",
-                        () -> ClientConfig.hudEnabled, v -> ClientConfig.hudEnabled = v, left, rowY += 26);
-                addFeature("Health", "Player health display",
-                        () -> ClientConfig.showHealth, v -> ClientConfig.showHealth = v, left, rowY++);
-                addFeature("Hunger", "Food level display",
-                        () -> ClientConfig.showHunger, v -> ClientConfig.showHunger = v, left, rowY++);
-                addFeature("Armor", "Armor value display",
-                        () -> ClientConfig.showArmor, v -> ClientConfig.showArmor = v, left, rowY++);
-                addFeature("FPS Counter", "Current frames per second",
-                        () -> ClientConfig.showFps, v -> ClientConfig.showFps = v, left, rowY++);
-                addFeature("Coordinates", "Player XYZ coordinates",
-                        () -> ClientConfig.showCoordinates, v -> ClientConfig.showCoordinates = v, left, rowY++);
-                addFeature("Effect Counter", "Number of active potion effects",
-                        () -> ClientConfig.showEffects, v -> ClientConfig.showEffects = v, left, rowY++);
+                addFeature("Health", "Player health display", () -> ClientConfig.showHealth, v -> ClientConfig.showHealth = v, left, y); y += 26;
+                addFeature("Hunger", "Food level display", () -> ClientConfig.showHunger, v -> ClientConfig.showHunger = v, left, y); y += 26;
+                addFeature("Armor Status", "Armor value display", () -> ClientConfig.showArmor, v -> ClientConfig.showArmor = v, left, y); y += 26;
+                addFeature("FPS Counter", "Current frames per second", () -> ClientConfig.showFps, v -> ClientConfig.showFps = v, left, y); y += 26;
+                addFeature("Ping Counter", "Server latency in milliseconds", () -> ClientConfig.showPing, v -> ClientConfig.showPing = v, left, y); y += 26;
+                addFeature("Coordinates", "Player XYZ coordinates", () -> ClientConfig.showCoordinates, v -> ClientConfig.showCoordinates = v, left, y); y += 26;
+                addFeature("Potion Effects", "Active potion effect count", () -> ClientConfig.showEffects, v -> ClientConfig.showEffects = v, left, y);
             }
-            case PERFORMANCE -> {
-                addFeature("Compact HUD", "Reduce spacing between HUD lines",
-                        () -> ClientConfig.compactHud, v -> ClientConfig.compactHud = v, left, rowY++);
-                addInfo(left, rowY + 4, panelWidth, "Performance controls are not implemented yet.");
-                addInfo(left, rowY + 20, panelWidth, "No fake FPS or ping switches are shown as working.");
+            case COMBAT -> {
+                addFeature("CPS Counter", "Recent attack input count", () -> ClientConfig.showCps, v -> ClientConfig.showCps = v, left, y); y += 26;
+                addFeature("Keystrokes", "Movement, jump and sprint keys", () -> ClientConfig.showKeystrokes, v -> ClientConfig.showKeystrokes = v, left, y);
+                addInfo(left, y + 30, panelWidth, "PvP information only; no combat automation.");
             }
             case VISUALS -> {
-                addInfo(left, rowY + 4, panelWidth, "Visual modules will appear here when implemented.");
-                addInfo(left, rowY + 20, panelWidth, "Only working features are given enable switches.");
+                addFeature("Held Item Counter", "Show held item name and stack count", () -> ClientConfig.showHeldItem, v -> ClientConfig.showHeldItem = v, left, y); y += 26;
+                addFeature("Compact HUD", "Use tighter HUD spacing", () -> ClientConfig.compactHud, v -> ClientConfig.compactHud = v, left, y);
+                addInfo(left, y + 30, panelWidth, "More visual modules can be added in future updates.");
+            }
+            case PERFORMANCE -> {
+                addInfo(left, y, panelWidth, "Performance controls are not implemented yet.");
+                addInfo(left, y + 24, panelWidth, "Use Minecraft video settings or compatible optimization mods.");
+                addInfo(left, y + 48, panelWidth, "Ping depends on your network and server location.");
             }
             case GENERAL -> {
+                addFeature("Master HUD", "Show or hide every LightClient HUD widget", () -> ClientConfig.hudEnabled, v -> ClientConfig.hudEnabled = v, left, y); y += 26;
                 addRenderableWidget(Button.builder(Component.literal("Normal HUD preset"), b -> {
-                    ClientConfig.hudEnabled = true;
-                    ClientConfig.showHealth = true;
-                    ClientConfig.showHunger = true;
-                    ClientConfig.showArmor = true;
-                    ClientConfig.showFps = true;
-                    ClientConfig.showCoordinates = true;
-                    ClientConfig.showEffects = true;
-                    ClientConfig.compactHud = false;
-                    ClientConfig.save();
-                    init();
-                }).bounds(left + 14, rowY, panelWidth - 28, 20).build());
+                    ClientConfig.hudEnabled=true; ClientConfig.showHealth=true; ClientConfig.showHunger=true;
+                    ClientConfig.showArmor=true; ClientConfig.showFps=true; ClientConfig.showPing=true;
+                    ClientConfig.showCps=true; ClientConfig.showCoordinates=true; ClientConfig.showEffects=true;
+                    ClientConfig.showKeystrokes=true; ClientConfig.showHeldItem=false; ClientConfig.compactHud=false;
+                    ClientConfig.save(); init();
+                }).bounds(left + 14, y, panelWidth - 28, 20).build()); y += 26;
                 addRenderableWidget(Button.builder(Component.literal("Minimal HUD preset"), b -> {
-                    ClientConfig.hudEnabled = true;
-                    ClientConfig.showHealth = true;
-                    ClientConfig.showHunger = false;
-                    ClientConfig.showArmor = false;
-                    ClientConfig.showFps = true;
-                    ClientConfig.showCoordinates = false;
-                    ClientConfig.showEffects = false;
-                    ClientConfig.compactHud = true;
-                    ClientConfig.save();
-                    init();
-                }).bounds(left + 14, rowY + 26, panelWidth - 28, 20).build());
+                    ClientConfig.hudEnabled=true; ClientConfig.showHealth=true; ClientConfig.showHunger=false;
+                    ClientConfig.showArmor=false; ClientConfig.showFps=true; ClientConfig.showPing=true;
+                    ClientConfig.showCps=false; ClientConfig.showCoordinates=false; ClientConfig.showEffects=false;
+                    ClientConfig.showKeystrokes=false; ClientConfig.showHeldItem=false; ClientConfig.compactHud=true;
+                    ClientConfig.save(); init();
+                }).bounds(left + 14, y, panelWidth - 28, 20).build());
             }
         }
         addRenderableWidget(Button.builder(Component.literal("Done"), b -> onClose())
-                .bounds(left + 14, top + panelHeight - 28, panelWidth - 28, 20).build());
+                .bounds(left + 14, top + panelHeight - 27, panelWidth - 28, 19).build());
     }
 
     private void addFeature(String name, String description, BooleanSupplier getter,
-                            Consumer<Boolean> setter, int left, int row) {
+                            Consumer<Boolean> setter, int left, int rowY) {
         int panelWidth = Math.min(PANEL_WIDTH, width - 16);
-        int top = (height - Math.min(PANEL_HEIGHT, height - 16)) / 2;
-        int rowY = top + 78 + (row - 1) * 1;
-        // row is passed as a y-coordinate to keep each feature row stable.
-        rowY = row;
-        addRenderableWidget(Button.builder(Component.literal(name), b -> {
+        addRenderableWidget(Button.builder(Component.literal(name + (getter.getAsBoolean() ? "  ✓" : "  —")), b -> {
             boolean enabled = !getter.getAsBoolean();
             setter.accept(enabled);
             ClientConfig.save();
@@ -140,7 +124,7 @@ public final class ClickGuiScreen extends Screen {
         g.fill(left, top, left + panelWidth, top + panelHeight, 0xF00C1422);
         g.fill(left, top, left + panelWidth, top + 2, BLUE);
         g.drawCenteredString(font, "LIGHTCLIENT", width / 2, top + 11, 0xFFF1F5FF);
-        g.drawCenteredString(font, "CLEAN CLIENT MENU  •  RIGHT SHIFT", width / 2, top + 28, 0xFF9AC8FF);
+        g.drawCenteredString(font, "CLIENT MODULES  •  RIGHT SHIFT", width / 2, top + 28, 0xFF9AC8FF);
         super.render(g, mx, my, tick);
     }
 
