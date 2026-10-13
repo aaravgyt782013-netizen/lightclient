@@ -30,6 +30,15 @@ public final class HudRenderer {
         List<String> lines = new ArrayList<>();
         if (ClientConfig.showHealth) lines.add("HEALTH " + format(player.getHealth()) + "/" + format(player.getMaxHealth()));
         if (ClientConfig.showHunger) lines.add("FOOD " + player.getFoodData().getFoodLevel() + "/20");
+        if (ClientConfig.showSaturation) lines.add("SATURATION " + String.format(Locale.ROOT, "%.1f", player.getFoodData().getSaturationLevel()));
+        if (ClientConfig.showMovementSpeed) {
+            double speed = Math.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) * 20.0;
+            lines.add("SPEED " + String.format(Locale.ROOT, "%.2f", speed) + " blocks/s");
+        }
+        if (ClientConfig.showSessionTime) {
+            long seconds = ClientStats.sessionSeconds();
+            lines.add(String.format(Locale.ROOT, "SESSION %02d:%02d:%02d", seconds / 3600, (seconds / 60) % 60, seconds % 60));
+        }
         if (ClientConfig.showArmor) lines.add("ARMOR " + player.getArmorValue());
         if (ClientConfig.showArmorDurability) addArmorDurability(lines, player);
         if (ClientConfig.showFps) lines.add("FPS " + client.getFps());
