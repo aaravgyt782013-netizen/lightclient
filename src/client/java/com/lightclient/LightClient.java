@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.blaze3d.platform.InputConstants;
 import org.lwjgl.glfw.GLFW;
 
@@ -38,7 +38,7 @@ public final class LightClient implements ClientModInitializer {
 
         HudElementRegistry.attachElementAfter(
                 VanillaHudElements.CHAT,
-                ResourceLocation.fromNamespaceAndPath(MOD_ID, "status_hud"),
+                Identifier.fromNamespaceAndPath(MOD_ID, "status_hud"),
                 HudRenderer::render
         );
     }
