@@ -12,11 +12,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.resources.Identifier;
-import net.minecraft.network.chat.Component;
 import com.mojang.blaze3d.platform.InputConstants;
 import org.lwjgl.glfw.GLFW;
 
@@ -41,13 +38,6 @@ public final class LightClient implements ClientModInitializer {
                 client.execute(() -> {
                     if (client.screen == screen) client.setScreen(new LightClientHomeScreen());
                 });
-            } else if (screen instanceof PauseScreen) {
-                int buttonWidth = Math.min(180, scaledWidth - 16);
-                int x = (scaledWidth - buttonWidth) / 2;
-                int y = Math.max(4, scaledHeight - 54);
-                screen.addRenderableWidget(Button.builder(Component.literal("LIGHTCLIENT  •  SETTINGS"),
-                        button -> client.setScreen(new ClickGuiScreen(screen)))
-                        .bounds(x, y, buttonWidth, 20).build());
             }
         });
 
