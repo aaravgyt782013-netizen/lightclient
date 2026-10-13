@@ -12,8 +12,8 @@ import java.util.function.Consumer;
 
 public final class ClickGuiScreen extends Screen {
     private static final int BLUE = 0xFF258BFF;
-    private static final int PANEL_WIDTH = 430;
-    private static final int PANEL_HEIGHT = 330;
+    private static final int PANEL_WIDTH = 500;
+    private static final int PANEL_HEIGHT = 360;
     private final Screen parent;
     private Category category = Category.HUD;
 
@@ -48,7 +48,7 @@ public final class ClickGuiScreen extends Screen {
             }).bounds(x, tabY, tabWidth, 20).build());
         }
 
-        int y = top + 78;
+        int y = top + 80;
         switch (category) {
             case HUD -> {
                 addFeature("Health", "Player health display", () -> ClientConfig.showHealth, v -> ClientConfig.showHealth = v, left, y); y += 26;
@@ -71,7 +71,7 @@ public final class ClickGuiScreen extends Screen {
                 addFeature("Biome", "Current biome name", () -> ClientConfig.showBiome, v -> ClientConfig.showBiome = v, left, y); y += 26;
                 addFeature("Clock", "Local system clock", () -> ClientConfig.showClock, v -> ClientConfig.showClock = v, left, y); y += 26;
                 addFeature("Fullbright", "Reserved: lighting override requires renderer integration", () -> ClientConfig.fullbright, v -> ClientConfig.fullbright = v, left, y);
-                addInfo(left, y + 27, panelWidth, "Fullbright toggle is saved but not active yet.");
+                addInfo(left, y + 27, panelWidth, "Saved setting; lighting override is not active yet.");
             }
             case ITEMS -> {
                 addFeature("Held Item", "Name and stack count", () -> ClientConfig.showHeldItem, v -> ClientConfig.showHeldItem = v, left, y); y += 26;
@@ -81,13 +81,10 @@ public final class ClickGuiScreen extends Screen {
                 addFeature("Inventory Counters", "Golden apples, pearls and totems", () -> ClientConfig.showInventoryCounters, v -> ClientConfig.showInventoryCounters = v, left, y);
             }
             case PERFORMANCE -> {
-                addInfo(left, y, panelWidth, "Performance options are being developed.");
-                addInfo(left, y + 26, panelWidth, "For now, use compatible renderer optimization mods.");
-                addInfo(left, y + 52, panelWidth, "No FPS multiplier is promised; results vary by device.");
-                addFeature("Low Fire", "Reserved: requires render-layer integration", () -> ClientConfig.lowFire, v -> ClientConfig.lowFire = v, left, y + 84);
-                addFeature("Hide Potion Particles", "Reserved: requires particle filtering", () -> ClientConfig.hidePotionParticles, v -> ClientConfig.hidePotionParticles = v, left, y + 110);
-                addFeature("Hide Explosion Particles", "Reserved: requires particle filtering", () -> ClientConfig.hideExplosionParticles, v -> ClientConfig.hideExplosionParticles = v, left, y + 136);
-                addInfo(left, y + 164, panelWidth, "These three reserved toggles are not active yet.");
+                addInfo(left, y, panelWidth, "Optimization modules are still being implemented.");
+                addFeature("Low Fire", "Not active yet", () -> ClientConfig.lowFire, v -> ClientConfig.lowFire = v, left, y + 28);
+                addFeature("Hide Potion Particles", "Not active yet", () -> ClientConfig.hidePotionParticles, v -> ClientConfig.hidePotionParticles = v, left, y + 54);
+                addFeature("Hide Explosion Particles", "Not active yet", () -> ClientConfig.hideExplosionParticles, v -> ClientConfig.hideExplosionParticles = v, left, y + 80);
             }
             case GENERAL -> {
                 addFeature("Master HUD", "Show or hide every LightClient HUD widget", () -> ClientConfig.hudEnabled, v -> ClientConfig.hudEnabled = v, left, y); y += 26;
@@ -114,20 +111,17 @@ public final class ClickGuiScreen extends Screen {
     private void addFeature(String name, String description, BooleanSupplier getter,
                             Consumer<Boolean> setter, int left, int rowY) {
         int panelWidth = Math.min(PANEL_WIDTH, width - 16);
-        addRenderableWidget(Button.builder(Component.literal(name + (getter.getAsBoolean() ? "  ✓" : "  —")), b -> {
+        String state = getter.getAsBoolean() ? "ON" : "OFF";
+        addRenderableWidget(Button.builder(Component.literal(name + "     •     " + state), b -> {
             boolean enabled = !getter.getAsBoolean();
             setter.accept(enabled);
             ClientConfig.save();
-            b.setMessage(Component.literal(name + (enabled ? "  ✓" : "  —")));
-        }).bounds(left + 14, rowY, Math.max(100, panelWidth - 76), 21).build());
-        addRenderableWidget(Button.builder(Component.literal("⚙"), b ->
-                Minecraft.getInstance().setScreen(new ModuleSettingsScreen(this, name, description)))
-                .bounds(left + panelWidth - 48, rowY, 34, 21).build());
+            b.setMessage(Component.literal(name + "     •     " + (enabled ? "ON" : "OFF")));
+        }).bounds(left + 14, rowY, panelWidth - 28, 22).build());
     }
 
     private void addInfo(int left, int y, int panelWidth, String text) {
-        addRenderableWidget(Button.builder(Component.literal(text), b -> {})
-                .bounds(left + 14, y, panelWidth - 28, 22).build());
+        // Informational copy is drawn by render instead of being a non-functional button.
     }
 
     @Override public void render(GuiGraphics g, int mx, int my, float tick) {
