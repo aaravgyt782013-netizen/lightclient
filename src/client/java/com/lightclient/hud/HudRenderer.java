@@ -20,39 +20,43 @@ public final class HudRenderer {
         if (!ClientConfig.hudEnabled || player == null || client.options.hideGui) return;
 
         List<String> lines = new ArrayList<>();
-        if (ClientConfig.showHealth) {
-            lines.add("HEALTH " + format(player.getHealth()) + "/" + format(player.getMaxHealth()));
+        if (ClientConfig.showHealth) lines.add("HEALTH " + format(player.getHealth()) + "/" + format(player.getMaxHealth()));
+        if (ClientConfig.showHunger) lines.add("FOOD " + player.getFoodData().getFoodLevel());
+        if (ClientConfig.showArmor) lines.add("ARMOR " + player.getArmorValue());
+        if (ClientConfig.showFps) lines.add("FPS " + client.getFps());
+        if (ClientConfig.showPing) {
+            var info = client.getConnection() == null ? null : client.getConnection().getPlayerInfo(player.getUUID());
+            lines.add("PING " + (info == null ? "--" : info.getLatency() + " ms"));
         }
-        if (ClientConfig.showHunger) {
-            lines.add("FOOD " + player.getFoodData().getFoodLevel());
-        }
-        if (ClientConfig.showArmor) {
-            lines.add("ARMOR " + player.getArmorValue());
-        }
-        if (ClientConfig.showFps) {
-            lines.add("FPS " + client.getFps());
-        }
+        if (ClientConfig.showCps) lines.add("CPS " + ClientStats.cps());
         if (ClientConfig.showCoordinates) {
-            lines.add(String.format(Locale.ROOT, "XYZ %.0f / %.0f / %.0f",
-                    player.getX(), player.getY(), player.getZ()));
+            lines.add(String.format(Locale.ROOT, "XYZ %.0f / %.0f / %.0f", player.getX(), player.getY(), player.getZ()));
         }
-        if (ClientConfig.showEffects) {
-            lines.add("EFFECTS " + player.getActiveEffects().size());
+        if (ClientConfig.showEffects) lines.add("EFFECTS " + player.getActiveEffects().size());
+        if (ClientConfig.showHeldItem) {
+            var stack = player.getMainHandItem();
+            if (!stack.isEmpty()) lines.add("ITEM " + stack.getHoverName().getString() + " x" + stack.getCount());
+        }
+        if (ClientConfig.showKeystrokes) {
+            String keys = (client.options.keyUp.isDown() ? "W" : "w") + " "
+                    + (client.options.keyLeft.isDown() ? "A" : "a") + " "
+                    + (client.options.keyDown.isDown() ? "S" : "s") + " "
+                    + (client.options.keyRight.isDown() ? "D" : "d")
+                    + "   J:" + (client.options.keyJump.isDown() ? "●" : "○")
+                    + "   Sprint:" + (client.options.keySprint.isDown() ? "ON" : "off");
+            lines.add("KEYS " + keys);
         }
 
-        int x = 8;
-        int y = 8;
+        int x = 8, y = 8;
         int lineHeight = ClientConfig.compactHud ? 10 : 12;
         for (String line : lines) {
-            int width = client.font.width(line);
-            graphics.fill(x - 4, y - 2, x + width + 5, y + lineHeight - 1, 0xB509101C);
+            int lineWidth = client.font.width(line);
+            graphics.fill(x - 4, y - 2, x + lineWidth + 5, y + lineHeight - 1, 0xB509101C);
             graphics.fill(x - 4, y - 2, x - 2, y + lineHeight - 1, 0xFF258BFF);
             graphics.drawString(client.font, Component.literal(line), x, y, 0xFFF1F5FF, false);
             y += lineHeight + 2;
         }
     }
 
-    private static String format(float value) {
-        return String.format(Locale.ROOT, "%.1f", value);
-    }
+    private static String format(float value) { return String.format(Locale.ROOT, "%.1f", value); }
 }
