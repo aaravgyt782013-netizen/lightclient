@@ -113,14 +113,19 @@ public final class HudRenderer {
 
     private static void addArmorDurability(List<String> lines, Player player) {
         String[] names = {"BOOTS", "LEGS", "CHEST", "HELMET"};
-        int index = 0;
-        for (ItemStack stack : player.getInventory().armor) {
+        net.minecraft.world.entity.EquipmentSlot[] slots = {
+                net.minecraft.world.entity.EquipmentSlot.FEET,
+                net.minecraft.world.entity.EquipmentSlot.LEGS,
+                net.minecraft.world.entity.EquipmentSlot.CHEST,
+                net.minecraft.world.entity.EquipmentSlot.HEAD
+        };
+        for (int i = 0; i < slots.length; i++) {
+            ItemStack stack = player.getItemBySlot(slots[i]);
             if (!stack.isEmpty() && stack.isDamageableItem()) {
                 int remaining = Math.max(0, stack.getMaxDamage() - stack.getDamageValue());
                 int percent = Math.round(100.0f * remaining / stack.getMaxDamage());
-                lines.add(names[Math.min(index, names.length - 1)] + " " + percent + "%");
+                lines.add(names[i] + " " + percent + "%");
             }
-            index++;
         }
     }
 
