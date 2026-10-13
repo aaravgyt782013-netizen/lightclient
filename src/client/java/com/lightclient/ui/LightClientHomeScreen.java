@@ -11,18 +11,32 @@ import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.network.chat.Component;
 
 public final class LightClientHomeScreen extends Screen {
-    private static final int BLUE = 0xFF258BFF;
-    private static final int PANEL = 0xE909111E;
+    private static final int BLUE = 0xFF3997FF;
+    private static final int CYAN = 0xFF62D8FF;
+    private static final int BG = 0xFF070B14;
+    private static final int PANEL = 0xF20D1524;
+    private static final int MUTED = 0xFF9DAEC6;
+
+    private int menuLeft;
+    private int menuTop;
+    private int menuWidth;
+    private int menuHeight;
 
     public LightClientHomeScreen() { super(Component.literal("LightClient")); }
 
     @Override
     protected void init() {
         clearWidgets();
-        int panelWidth = Math.min(330, this.width - 20);
-        int buttonWidth = Math.min(258, panelWidth - 26);
-        int buttonLeft = (this.width - buttonWidth) / 2;
-        int startY = Math.max(78, this.height / 2 - 48);
+        menuWidth = Math.min(292, Math.max(210, width - 28));
+        menuHeight = 252;
+        boolean wide = width >= 690;
+        int totalWidth = wide ? 610 : menuWidth;
+        int totalLeft = (width - totalWidth) / 2;
+        menuLeft = wide ? totalLeft + 318 : (width - menuWidth) / 2;
+        menuTop = Math.max(18, (height - menuHeight) / 2 + 12);
+        int buttonWidth = menuWidth - 30;
+        int buttonLeft = menuLeft + 15;
+        int startY = menuTop + 43;
 
         addButton("SINGLEPLAYER", buttonLeft, startY, buttonWidth,
                 () -> Minecraft.getInstance().setScreen(new SelectWorldScreen(this)));
@@ -52,21 +66,47 @@ public final class LightClientHomeScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        graphics.fill(0, 0, this.width, this.height, 0xFF050914);
-        graphics.fill(0, 0, this.width, this.height / 3, 0xFF0A1930);
-        graphics.fill(0, this.height / 3, this.width, this.height / 3 + 1, BLUE);
-        int panelWidth = Math.min(330, this.width - 20);
-        int left = (this.width - panelWidth) / 2;
-        int top = Math.max(24, this.height / 2 - 132);
-        graphics.fill(left, top, left + panelWidth, Math.min(this.height - 4, top + 320), PANEL);
-        graphics.fill(left, top, left + panelWidth, top + 2, BLUE);
-        graphics.drawCenteredString(this.font, "LIGHTCLIENT", this.width / 2, top + 12, 0xFFFFFFFF);
-        graphics.drawCenteredString(this.font, "JAVA 1.21.11  •  CLEAN PvP UI",
-                this.width / 2, top + 29, 0xFF8BBFFF);
-        graphics.drawCenteredString(this.font, "PLAY SMOOTHER  •  GO FURTHER",
-                this.width / 2, this.height - 13, 0xFF9CAEC8);
-        super.render(graphics, mouseX, mouseY, partialTick);
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        g.fill(0, 0, width, height, BG);
+        // Original LightClient backdrop: layered geometric panels and a restrained blue accent.
+        g.fill(0, 0, width, height / 2, 0xFF0A1425);
+        g.fill(0, height / 2, width, height, 0xFF080D17);
+        g.fill(0, 0, width, 2, BLUE);
+        g.fill(0, height - 2, width, height, 0xFF15243A);
+
+        boolean wide = width >= 690;
+        if (wide) {
+            int totalLeft = (width - 610) / 2;
+            int heroLeft = totalLeft;
+            int heroTop = menuTop;
+            g.fill(heroLeft, heroTop, heroLeft + 298, heroTop + menuHeight, PANEL);
+            g.fill(heroLeft, heroTop, heroLeft + 3, heroTop + menuHeight, BLUE);
+            g.fill(heroLeft + 18, heroTop + 18, heroLeft + 58, heroTop + 22, CYAN);
+            g.drawString(font, "LIGHTCLIENT", heroLeft + 18, heroTop + 36, 0xFFFFFFFF, false);
+            g.drawString(font, "YOUR GAME. YOUR WAY.", heroLeft + 18, heroTop + 55, 0xFF9CCBFF, false);
+            g.fill(heroLeft + 18, heroTop + 83, heroLeft + 280, heroTop + 84, 0xFF26364C);
+            g.drawString(font, "CLIENT OVERVIEW", heroLeft + 18, heroTop + 98, CYAN, false);
+            g.drawString(font, "A cleaner space for your", heroLeft + 18, heroTop + 119, 0xFFE7EFFB, false);
+            g.drawString(font, "Minecraft sessions.", heroLeft + 18, heroTop + 132, 0xFFE7EFFB, false);
+
+            feature(g, heroLeft + 18, heroTop + 162, "01", "CUSTOM HUD", "Choose the info you need");
+            feature(g, heroLeft + 18, heroTop + 194, "02", "QUICK CONTROLS", "Settings in one place");
+            g.drawString(font, "FABRIC CLIENT  /  1.21.11", heroLeft + 18, heroTop + 231, MUTED, false);
+        }
+
+        g.fill(menuLeft, menuTop, menuLeft + menuWidth, menuTop + menuHeight, PANEL);
+        g.fill(menuLeft, menuTop, menuLeft + menuWidth, menuTop + 2, BLUE);
+        g.drawString(font, "MAIN MENU", menuLeft + 15, menuTop + 13, 0xFFFFFFFF, false);
+        g.drawString(font, "Choose where to go", menuLeft + 15, menuTop + 27, MUTED, false);
+        g.drawString(font, "LIGHTCLIENT  •  JAVA 1.21.11", width / 2, height - 13, 0xFF91A5C1, true);
+        super.render(g, mouseX, mouseY, partialTick);
+    }
+
+    private void feature(GuiGraphics g, int x, int y, String number, String title, String subtitle) {
+        g.fill(x, y, x + 30, y + 25, 0xFF142943);
+        g.drawCenteredString(font, number, x + 15, y + 8, CYAN);
+        g.drawString(font, title, x + 40, y + 1, 0xFFF0F5FF, false);
+        g.drawString(font, subtitle, x + 40, y + 13, MUTED, false);
     }
 
     @Override public boolean isPauseScreen() { return false; }
