@@ -21,9 +21,12 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
+def lightClientModVersion = project.version.toString()
 processResources {
-    inputs.property "version", project.version
-    filesMatching("fabric.mod.json") { expand "version": version }
+    inputs.property "version", lightClientModVersion
+    filesMatching("fabric.mod.json") {
+        expand("version": lightClientModVersion)
+    }
 }
 tasks.withType(JavaCompile).configureEach {
     options.release = 21
