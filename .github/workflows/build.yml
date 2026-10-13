@@ -25,6 +25,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: LightClient-${{ github.sha }}
-          path: build/libs/lightclient-*.jar
+          path: |
+            build/libs/lightclient-*.jar
+            !build/libs/*-sources.jar
+            !build/libs/*-dev.jar
           if-no-files-found: error
           retention-days: 14
