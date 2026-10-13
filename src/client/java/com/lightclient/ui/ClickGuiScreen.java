@@ -109,6 +109,9 @@ public final class ClickGuiScreen extends Screen {
                 add(out, "Compact HUD", "Tighter HUD spacing", () -> ClientConfig.compactHud, v -> ClientConfig.compactHud=v);
                 add(out, "Biome", "Current biome", () -> ClientConfig.showBiome, v -> ClientConfig.showBiome=v);
                 add(out, "Clock", "Local time", () -> ClientConfig.showClock, v -> ClientConfig.showClock=v);
+                add(out, "Saturation HUD", "Food saturation level", () -> ClientConfig.showSaturation, v -> ClientConfig.showSaturation=v);
+                add(out, "Movement Speed", "Horizontal speed in blocks per second", () -> ClientConfig.showMovementSpeed, v -> ClientConfig.showMovementSpeed=v);
+                add(out, "Session Timer", "Time since client started", () -> ClientConfig.showSessionTime, v -> ClientConfig.showSessionTime=v);
                 add(out, "Fullbright", "Lighting override", () -> ClientConfig.fullbright, v -> ClientConfig.fullbright=v, false);
             }
             case ITEMS -> {
