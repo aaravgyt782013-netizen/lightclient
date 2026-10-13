@@ -198,6 +198,7 @@ public final class ClickGuiScreen extends Screen {
         g.drawString(font, category.label, listLeft, panelTop + 16, 0xFFFFFFFF, false);
         g.drawString(font, category.subtitle, listLeft, panelTop + 33, MUTED, false);
         g.drawString(font, visibleModules.size() + " modules", panelLeft + sidebarWidth + 16, panelTop + 53, 0xFF7189A7, false);
+        g.drawString(font, "LEFT CLICK: TOGGLE   •   RIGHT CLICK: SETTINGS", listLeft, panelTop + panelHeight - 27, MUTED, false);
 
         int rowY = listTop;
         int availableHeight = listBottom - listTop;
@@ -243,14 +244,16 @@ public final class ClickGuiScreen extends Screen {
         if (super.mouseClicked(event, doubleClick)) return true;
         double mouseX = event.x();
         double mouseY = event.y();
-        if (event.button() == 0 && mouseX >= listLeft && mouseX <= listLeft + listWidth
+        if ((event.button() == 0 || event.button() == 1) && mouseX >= listLeft && mouseX <= listLeft + listWidth
                 && mouseY >= listTop && mouseY < listBottom) {
             int slot = (int) ((mouseY - listTop) / (ROW_HEIGHT + ROW_GAP));
             int idx = scrollOffset + slot;
             int yWithinRow = (int) (mouseY - listTop) % (ROW_HEIGHT + ROW_GAP);
             if (yWithinRow < ROW_HEIGHT && idx >= 0 && idx < visibleModules.size()) {
                 Module m = visibleModules.get(idx);
-                if (m.implemented()) {
+                if (event.button() == 1) {
+                    Minecraft.getInstance().setScreen(new ModuleSettingsScreen(this, m.name(), m.description()));
+                } else if (m.implemented()) {
                     boolean value = !m.get().getAsBoolean();
                     m.set().accept(value);
                     ClientConfig.save();
