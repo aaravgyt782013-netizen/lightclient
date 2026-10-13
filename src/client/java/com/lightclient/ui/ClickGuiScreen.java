@@ -216,11 +216,17 @@ public final class ClickGuiScreen extends Screen {
             int toggleW = 40, toggleH = 18;
             int tx = listLeft + listWidth - toggleW - 9;
             int ty = y + (ROW_HEIGHT - toggleH) / 2;
-            int toggleColor = !m.implemented() ? 0xFF273140 : enabled ? BLUE : 0xFF334155;
-            g.fill(tx, ty, tx + toggleW, ty + toggleH, toggleColor);
-            int knobX = enabled && m.implemented() ? tx + toggleW - 15 : tx + 3;
-            g.fill(knobX, ty + 3, knobX + 12, ty + toggleH - 3, 0xFFFFFFFF);
-            if (!m.implemented()) g.drawString(font, "WIP", tx - 28, y + 17, 0xFF77869A, false);
+            boolean action = m.name().endsWith("Preset");
+            if (action) {
+                g.fill(tx - 13, ty - 1, tx + toggleW + 5, ty + toggleH + 1, hovered ? 0xFF24558A : 0xFF1B3C60);
+                g.drawCenteredString(font, "APPLY", tx + toggleW / 2 - 4, ty + 5, 0xFFFFFFFF);
+            } else {
+                int toggleColor = !m.implemented() ? 0xFF273140 : enabled ? BLUE : 0xFF334155;
+                g.fill(tx, ty, tx + toggleW, ty + toggleH, toggleColor);
+                int knobX = enabled && m.implemented() ? tx + toggleW - 15 : tx + 3;
+                g.fill(knobX, ty + 3, knobX + 12, ty + toggleH - 3, 0xFFFFFFFF);
+                if (!m.implemented()) g.drawString(font, "WIP", tx - 28, y + 17, 0xFF77869A, false);
+            }
         }
 
         if (visibleModules.isEmpty()) {
@@ -251,10 +257,11 @@ public final class ClickGuiScreen extends Screen {
             int yWithinRow = (int) (mouseY - listTop) % (ROW_HEIGHT + ROW_GAP);
             if (yWithinRow < ROW_HEIGHT && idx >= 0 && idx < visibleModules.size()) {
                 Module m = visibleModules.get(idx);
-                if (event.button() == 1) {
+                boolean action = m.name().endsWith("Preset");
+                if (event.button() == 1 && !action) {
                     Minecraft.getInstance().setScreen(new ModuleSettingsScreen(this, m.name(), m.description()));
-                } else if (m.implemented()) {
-                    boolean value = !m.get().getAsBoolean();
+                } else if (event.button() == 0 && m.implemented()) {
+                    boolean value = action || !m.get().getAsBoolean();
                     m.set().accept(value);
                     ClientConfig.save();
                 }
