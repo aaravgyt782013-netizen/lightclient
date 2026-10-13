@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -237,9 +239,11 @@ public final class ClickGuiScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) return true;
-        if (button == 0 && mouseX >= listLeft && mouseX <= listLeft + listWidth
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (super.mouseClicked(event, doubleClick)) return true;
+        double mouseX = event.x();
+        double mouseY = event.y();
+        if (event.button() == 0 && mouseX >= listLeft && mouseX <= listLeft + listWidth
                 && mouseY >= listTop && mouseY < listBottom) {
             int slot = (int) ((mouseY - listTop) / (ROW_HEIGHT + ROW_GAP));
             int idx = scrollOffset + slot;
@@ -270,9 +274,9 @@ public final class ClickGuiScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (searchBox != null && searchBox.isFocused() && searchBox.keyPressed(keyCode, scanCode, modifiers)) return true;
-        return super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        if (searchBox != null && searchBox.isFocused() && searchBox.keyPressed(event)) return true;
+        return super.keyPressed(event);
     }
 
     @Override
