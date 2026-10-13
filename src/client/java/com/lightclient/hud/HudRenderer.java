@@ -114,7 +114,7 @@ public final class HudRenderer {
     private static void addArmorDurability(List<String> lines, Player player) {
         String[] names = {"BOOTS", "LEGS", "CHEST", "HELMET"};
         int index = 0;
-        for (ItemStack stack : player.getArmorSlots()) {
+        for (ItemStack stack : player.getInventory().armor) {
             if (!stack.isEmpty() && stack.isDamageableItem()) {
                 int remaining = Math.max(0, stack.getMaxDamage() - stack.getDamageValue());
                 int percent = Math.round(100.0f * remaining / stack.getMaxDamage());
