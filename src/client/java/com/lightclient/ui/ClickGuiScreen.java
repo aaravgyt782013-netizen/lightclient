@@ -7,133 +7,168 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public final class ClickGuiScreen extends Screen {
-    private static final int BLUE = 0xFF258BFF;
-    private static final int PANEL_WIDTH = 500;
-    private static final int PANEL_HEIGHT = 360;
+    private static final int BLUE = 0xFF3A91FF;
+    private static final int PANEL = 0xF20B1220;
+    private static final int SIDEBAR = 0xFF0A101C;
+    private static final int ROW = 0xFF141F30;
+    private static final int ROW_ON = 0xFF102B43;
+    private static final int MUTED = 0xFF9CAFC8;
+    private static final int PANEL_WIDTH = 560;
+    private static final int PANEL_HEIGHT = 370;
+
     private final Screen parent;
     private Category category = Category.HUD;
 
     private enum Category {
-        HUD("HUD"), COMBAT("Combat"), VISUALS("Visuals"), ITEMS("Items"), PERFORMANCE("Performance"), GENERAL("General");
+        HUD("HUD", "Interface widgets"),
+        PVP("PVP", "Combat information"),
+        VISUALS("VISUALS", "Visual modules"),
+        ITEMS("ITEMS", "Inventory overlays"),
+        PERFORMANCE("PERFORMANCE", "Client optimization"),
+        GENERAL("GENERAL", "Client preferences");
         final String label;
-        Category(String label) { this.label = label; }
+        final String subtitle;
+        Category(String label, String subtitle) { this.label = label; this.subtitle = subtitle; }
     }
+
+    private record Module(String name, String description, BooleanSupplier get, Consumer<Boolean> set, boolean implemented) {}
 
     public ClickGuiScreen() { this(null); }
     public ClickGuiScreen(Screen parent) {
-        super(Component.literal("LightClient Menu"));
+        super(Component.literal("LightClient"));
         this.parent = parent;
     }
 
     @Override protected void init() {
         clearWidgets();
-        int panelWidth = Math.min(PANEL_WIDTH, width - 16);
-        int panelHeight = Math.min(PANEL_HEIGHT, height - 16);
-        int left = (width - panelWidth) / 2;
-        int top = (height - panelHeight) / 2;
-        int tabY = top + 48;
-        int gap = 3;
-        int tabWidth = (panelWidth - 28 - gap * (Category.values().length - 1)) / Category.values().length;
-        int tabX = left + 14;
-        for (int i = 0; i < Category.values().length; i++) {
-            Category tab = Category.values()[i];
-            int x = tabX + i * (tabWidth + gap);
-            addRenderableWidget(Button.builder(Component.literal((category == tab ? "• " : "") + tab.label), b -> {
-                category = tab;
+        int pw = Math.min(PANEL_WIDTH, width - 12);
+        int ph = Math.min(PANEL_HEIGHT, height - 12);
+        int left = (width - pw) / 2;
+        int top = (height - ph) / 2;
+        int side = Math.min(126, Math.max(88, pw / 4));
+        int sidebarX = left + 8;
+        int sidebarY = top + 54;
+        int catW = side - 14;
+        for (Category item : Category.values()) {
+            int idx = item.ordinal();
+            addRenderableWidget(Button.builder(Component.literal((category == item ? "▌ " : "") + item.label), b -> {
+                category = item;
                 init();
-            }).bounds(x, tabY, tabWidth, 20).build());
+            }).bounds(sidebarX, sidebarY + idx * 31, catW, 25).build());
         }
 
-        int y = top + 80;
-        switch (category) {
+        int contentX = left + side + 12;
+        int contentW = pw - side - 26;
+        int contentY = top + 67;
+        List<Module> modules = modulesFor(category);
+        int rowH = 25;
+        int maxRows = Math.max(1, (ph - 110) / rowH);
+        for (int i = 0; i < Math.min(modules.size(), maxRows); i++) {
+            Module m = modules.get(i);
+            int y = contentY + i * (rowH + 4);
+            addRenderableWidget(Button.builder(Component.literal((m.get().getAsBoolean() ? "●  " : "○  ") + m.name() + (m.implemented() ? "" : "  •  WIP")), b -> {
+                if (!m.implemented()) return;
+                boolean value = !m.get().getAsBoolean();
+                m.set().accept(value);
+                ClientConfig.save();
+                b.setMessage(Component.literal((value ? "●  " : "○  ") + m.name()));
+            }).bounds(contentX, y, contentW, rowH).build());
+        }
+
+        addRenderableWidget(Button.builder(Component.literal("CLOSE"), b -> onClose())
+                .bounds(left + pw - 84, top + ph - 29, 72, 20).build());
+    }
+
+    private List<Module> modulesFor(Category cat) {
+        List<Module> out = new ArrayList<>();
+        switch (cat) {
             case HUD -> {
-                addFeature("Health", "Player health display", () -> ClientConfig.showHealth, v -> ClientConfig.showHealth = v, left, y); y += 26;
-                addFeature("Hunger", "Food level display", () -> ClientConfig.showHunger, v -> ClientConfig.showHunger = v, left, y); y += 26;
-                addFeature("Armor Status", "Armor value display", () -> ClientConfig.showArmor, v -> ClientConfig.showArmor = v, left, y); y += 26;
-                addFeature("FPS Counter", "Current frames per second", () -> ClientConfig.showFps, v -> ClientConfig.showFps = v, left, y); y += 26;
-                addFeature("Ping Counter", "Server latency in milliseconds", () -> ClientConfig.showPing, v -> ClientConfig.showPing = v, left, y); y += 26;
-                addFeature("Coordinates", "Player XYZ coordinates", () -> ClientConfig.showCoordinates, v -> ClientConfig.showCoordinates = v, left, y); y += 26;
-                addFeature("Direction", "Cardinal direction faced", () -> ClientConfig.showDirection, v -> ClientConfig.showDirection = v, left, y);
+                add(out, "Health", "Player health", () -> ClientConfig.showHealth, v -> ClientConfig.showHealth=v);
+                add(out, "Hunger", "Food level", () -> ClientConfig.showHunger, v -> ClientConfig.showHunger=v);
+                add(out, "Armor Status", "Equipped armor", () -> ClientConfig.showArmor, v -> ClientConfig.showArmor=v);
+                add(out, "FPS Counter", "Frames per second", () -> ClientConfig.showFps, v -> ClientConfig.showFps=v);
+                add(out, "Ping Counter", "Server latency", () -> ClientConfig.showPing, v -> ClientConfig.showPing=v);
+                add(out, "Coordinates", "XYZ position", () -> ClientConfig.showCoordinates, v -> ClientConfig.showCoordinates=v);
+                add(out, "Direction", "Facing direction", () -> ClientConfig.showDirection, v -> ClientConfig.showDirection=v);
+                add(out, "Potion Effects", "Active status effects", () -> ClientConfig.showEffects, v -> ClientConfig.showEffects=v);
+                add(out, "Keystrokes", "Movement keys and clicks", () -> ClientConfig.showKeystrokes, v -> ClientConfig.showKeystrokes=v);
+                add(out, "CPS Counter", "Clicks per second", () -> ClientConfig.showCps, v -> ClientConfig.showCps=v);
             }
-            case COMBAT -> {
-                addFeature("CPS Counter", "Recent attack input count", () -> ClientConfig.showCps, v -> ClientConfig.showCps = v, left, y); y += 26;
-                addFeature("Keystrokes", "Movement, jump and sprint keys", () -> ClientConfig.showKeystrokes, v -> ClientConfig.showKeystrokes = v, left, y); y += 26;
-                addFeature("Armor Durability", "Durability percentage for equipped armor", () -> ClientConfig.showArmorDurability, v -> ClientConfig.showArmorDurability = v, left, y); y += 26;
-                addFeature("Potion Details", "Names and remaining duration of active effects", () -> ClientConfig.showPotionDetails, v -> ClientConfig.showPotionDetails = v, left, y); y += 26;
-                addFeature("Target Info", "Health of the entity under the crosshair", () -> ClientConfig.showTargetInfo, v -> ClientConfig.showTargetInfo = v, left, y);
+            case PVP -> {
+                add(out, "Armor Durability", "Durability for equipped armor", () -> ClientConfig.showArmorDurability, v -> ClientConfig.showArmorDurability=v);
+                add(out, "Potion Details", "Effect names and timers", () -> ClientConfig.showPotionDetails, v -> ClientConfig.showPotionDetails=v);
+                add(out, "Target Info", "Crosshair target health", () -> ClientConfig.showTargetInfo, v -> ClientConfig.showTargetInfo=v);
             }
             case VISUALS -> {
-                addFeature("Compact HUD", "Use tighter HUD spacing", () -> ClientConfig.compactHud, v -> ClientConfig.compactHud = v, left, y); y += 26;
-                addFeature("Biome", "Current biome name", () -> ClientConfig.showBiome, v -> ClientConfig.showBiome = v, left, y); y += 26;
-                addFeature("Clock", "Local system clock", () -> ClientConfig.showClock, v -> ClientConfig.showClock = v, left, y); y += 26;
-                addFeature("Fullbright", "Reserved: lighting override requires renderer integration", () -> ClientConfig.fullbright, v -> ClientConfig.fullbright = v, left, y);
-                addInfo(left, y + 27, panelWidth, "Saved setting; lighting override is not active yet.");
+                add(out, "Compact HUD", "Tighter HUD spacing", () -> ClientConfig.compactHud, v -> ClientConfig.compactHud=v);
+                add(out, "Biome", "Current biome", () -> ClientConfig.showBiome, v -> ClientConfig.showBiome=v);
+                add(out, "Clock", "Local time", () -> ClientConfig.showClock, v -> ClientConfig.showClock=v);
+                add(out, "Fullbright", "Lighting override", () -> ClientConfig.fullbright, v -> ClientConfig.fullbright=v, false);
             }
             case ITEMS -> {
-                addFeature("Held Item", "Name and stack count", () -> ClientConfig.showHeldItem, v -> ClientConfig.showHeldItem = v, left, y); y += 26;
-                addFeature("Item Durability", "Remaining durability of held tools and armor", () -> ClientConfig.showItemDurability, v -> ClientConfig.showItemDurability = v, left, y); y += 26;
-                addFeature("Food Preview", "Nutrition and saturation for held food", () -> ClientConfig.showFoodPreview, v -> ClientConfig.showFoodPreview = v, left, y); y += 26;
-                addFeature("Arrow Counter", "Count arrows in inventory", () -> ClientConfig.showArrows, v -> ClientConfig.showArrows = v, left, y); y += 26;
-                addFeature("Inventory Counters", "Golden apples, pearls and totems", () -> ClientConfig.showInventoryCounters, v -> ClientConfig.showInventoryCounters = v, left, y);
+                add(out, "Held Item", "Held stack and count", () -> ClientConfig.showHeldItem, v -> ClientConfig.showHeldItem=v);
+                add(out, "Item Durability", "Held tool durability", () -> ClientConfig.showItemDurability, v -> ClientConfig.showItemDurability=v);
+                add(out, "Food Preview", "Food nutrition and saturation", () -> ClientConfig.showFoodPreview, v -> ClientConfig.showFoodPreview=v);
+                add(out, "Arrow Counter", "Arrow count", () -> ClientConfig.showArrows, v -> ClientConfig.showArrows=v);
+                add(out, "Inventory Counters", "Pearls, apples and totems", () -> ClientConfig.showInventoryCounters, v -> ClientConfig.showInventoryCounters=v);
             }
             case PERFORMANCE -> {
-                addInfo(left, y, panelWidth, "Optimization modules are still being implemented.");
-                addFeature("Low Fire", "Not active yet", () -> ClientConfig.lowFire, v -> ClientConfig.lowFire = v, left, y + 28);
-                addFeature("Hide Potion Particles", "Not active yet", () -> ClientConfig.hidePotionParticles, v -> ClientConfig.hidePotionParticles = v, left, y + 54);
-                addFeature("Hide Explosion Particles", "Not active yet", () -> ClientConfig.hideExplosionParticles, v -> ClientConfig.hideExplosionParticles = v, left, y + 80);
+                add(out, "Low Fire", "Reduced fire overlay", () -> ClientConfig.lowFire, v -> ClientConfig.lowFire=v, false);
+                add(out, "Hide Potion Particles", "Suppress potion particles", () -> ClientConfig.hidePotionParticles, v -> ClientConfig.hidePotionParticles=v, false);
+                add(out, "Hide Explosion Particles", "Suppress explosion particles", () -> ClientConfig.hideExplosionParticles, v -> ClientConfig.hideExplosionParticles=v, false);
             }
             case GENERAL -> {
-                addFeature("Master HUD", "Show or hide every LightClient HUD widget", () -> ClientConfig.hudEnabled, v -> ClientConfig.hudEnabled = v, left, y); y += 26;
-                addRenderableWidget(Button.builder(Component.literal("Normal HUD preset"), b -> {
-                    ClientConfig.hudEnabled=true; ClientConfig.showHealth=true; ClientConfig.showHunger=true;
-                    ClientConfig.showArmor=true; ClientConfig.showFps=true; ClientConfig.showPing=true;
-                    ClientConfig.showCps=true; ClientConfig.showCoordinates=true; ClientConfig.showEffects=true;
-                    ClientConfig.showKeystrokes=true; ClientConfig.showHeldItem=false; ClientConfig.compactHud=false;
-                    ClientConfig.save(); init();
-                }).bounds(left + 14, y, panelWidth - 28, 20).build()); y += 26;
-                addRenderableWidget(Button.builder(Component.literal("Minimal HUD preset"), b -> {
-                    ClientConfig.hudEnabled=true; ClientConfig.showHealth=true; ClientConfig.showHunger=false;
-                    ClientConfig.showArmor=false; ClientConfig.showFps=true; ClientConfig.showPing=true;
-                    ClientConfig.showCps=false; ClientConfig.showCoordinates=false; ClientConfig.showEffects=false;
-                    ClientConfig.showKeystrokes=false; ClientConfig.showHeldItem=false; ClientConfig.compactHud=true;
-                    ClientConfig.save(); init();
-                }).bounds(left + 14, y, panelWidth - 28, 20).build());
+                add(out, "Master HUD", "Show or hide LightClient HUD", () -> ClientConfig.hudEnabled, v -> ClientConfig.hudEnabled=v);
+                add(out, "Normal HUD Preset", "Restore default HUD layout", () -> false, v -> {
+                    if (v) {
+                        ClientConfig.hudEnabled=true; ClientConfig.showHealth=true; ClientConfig.showHunger=true;
+                        ClientConfig.showArmor=true; ClientConfig.showFps=true; ClientConfig.showPing=true;
+                        ClientConfig.showCps=true; ClientConfig.showCoordinates=true; ClientConfig.showEffects=true;
+                        ClientConfig.showKeystrokes=true; ClientConfig.showHeldItem=false; ClientConfig.compactHud=false;
+                    }
+                });
+                add(out, "Minimal HUD Preset", "Keep only key information", () -> false, v -> {
+                    if (v) {
+                        ClientConfig.hudEnabled=true; ClientConfig.showHealth=true; ClientConfig.showHunger=false;
+                        ClientConfig.showArmor=false; ClientConfig.showFps=true; ClientConfig.showPing=true;
+                        ClientConfig.showCps=false; ClientConfig.showCoordinates=false; ClientConfig.showEffects=false;
+                        ClientConfig.showKeystrokes=false; ClientConfig.showHeldItem=false; ClientConfig.compactHud=true;
+                    }
+                });
             }
         }
-        addRenderableWidget(Button.builder(Component.literal("Done"), b -> onClose())
-                .bounds(left + 14, top + panelHeight - 27, panelWidth - 28, 19).build());
+        return out;
     }
 
-    private void addFeature(String name, String description, BooleanSupplier getter,
-                            Consumer<Boolean> setter, int left, int rowY) {
-        int panelWidth = Math.min(PANEL_WIDTH, width - 16);
-        String state = getter.getAsBoolean() ? "ON" : "OFF";
-        addRenderableWidget(Button.builder(Component.literal(name + "     •     " + state), b -> {
-            boolean enabled = !getter.getAsBoolean();
-            setter.accept(enabled);
-            ClientConfig.save();
-            b.setMessage(Component.literal(name + "     •     " + (enabled ? "ON" : "OFF")));
-        }).bounds(left + 14, rowY, panelWidth - 28, 22).build());
+    private void add(List<Module> out, String name, String desc, BooleanSupplier get, Consumer<Boolean> set) {
+        add(out, name, desc, get, set, true);
     }
-
-    private void addInfo(int left, int y, int panelWidth, String text) {
-        // Informational copy is drawn by render instead of being a non-functional button.
+    private void add(List<Module> out, String name, String desc, BooleanSupplier get, Consumer<Boolean> set, boolean implemented) {
+        out.add(new Module(name, desc, get, set, implemented));
     }
 
     @Override public void render(GuiGraphics g, int mx, int my, float tick) {
-        g.fill(0, 0, width, height, 0xA8000000);
-        int panelWidth = Math.min(PANEL_WIDTH, width - 16);
-        int panelHeight = Math.min(PANEL_HEIGHT, height - 16);
-        int left = (width - panelWidth) / 2;
-        int top = (height - panelHeight) / 2;
-        g.fill(left, top, left + panelWidth, top + panelHeight, 0xF00C1422);
-        g.fill(left, top, left + panelWidth, top + 2, BLUE);
-        g.drawCenteredString(font, "LIGHTCLIENT", width / 2, top + 11, 0xFFF1F5FF);
-        g.drawCenteredString(font, "CLIENT MODULES  •  RIGHT SHIFT", width / 2, top + 28, 0xFF9AC8FF);
+        g.fill(0, 0, width, height, 0xA900050C);
+        int pw = Math.min(PANEL_WIDTH, width - 12);
+        int ph = Math.min(PANEL_HEIGHT, height - 12);
+        int left = (width - pw) / 2;
+        int top = (height - ph) / 2;
+        int side = Math.min(126, Math.max(88, pw / 4));
+        g.fill(left, top, left + pw, top + ph, PANEL);
+        g.fill(left, top, left + 3, top + ph, BLUE);
+        g.fill(left + 3, top + 3, left + side, top + ph - 3, SIDEBAR);
+        g.fill(left + side, top + 3, left + side + 1, top + ph - 3, 0xFF26354A);
+        g.drawString(font, "LIGHTCLIENT", left + 14, top + 13, 0xFFFFFFFF, false);
+        g.drawString(font, "CLIENT MENU", left + 14, top + 29, MUTED, false);
+        g.drawString(font, category.label, left + side + 12, top + 15, 0xFFFFFFFF, false);
+        g.drawString(font, category.subtitle, left + side + 12, top + 32, MUTED, false);
+        g.drawString(font, "Click a row to toggle • WIP modules are disabled", left + side + 12, top + 49, 0xFF7E91AA, false);
         super.render(g, mx, my, tick);
     }
 
