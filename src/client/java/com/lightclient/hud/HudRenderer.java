@@ -142,6 +142,74 @@ public final class HudRenderer {
             }
             rowY += rowHeight;
         }
+
+        // Dedicated armor, potion and timer widgets.
+        renderExtraHud(graphics, client, player);
+    }
+
+    private static void renderExtraHud(GuiGraphics g, Minecraft client, Player player) {
+        int sw = client.getWindow().getGuiScaledWidth();
+        int sh = client.getWindow().getGuiScaledHeight();
+        int x = (sw - 112) / 2;
+        int y = sh - 91 - 34;
+        g.fill(x, y, x + 112, y + 30, 0xC909111E);
+        g.fill(x, y, x + 112, y + 2, 0xFF4B9EFF);
+        net.minecraft.world.entity.EquipmentSlot[] slots = {
+            net.minecraft.world.entity.EquipmentSlot.FEET,
+            net.minecraft.world.entity.EquipmentSlot.LEGS,
+            net.minecraft.world.entity.EquipmentSlot.CHEST,
+            net.minecraft.world.entity.EquipmentSlot.HEAD
+        };
+        for (int i = 0; i < slots.length; i++) {
+            ItemStack stack = player.getItemBySlot(slots[i]);
+            int sx = x + 8 + i * 25;
+            if (!stack.isEmpty()) {
+                g.renderItem(stack, sx, y + 4);
+                if (stack.isDamageableItem()) {
+                    float ratio = (float)(stack.getMaxDamage() - stack.getDamageValue()) / stack.getMaxDamage();
+                    int color = ratio > .5f ? 0xFF55D68B : ratio > .2f ? 0xFFFFC857 : 0xFFFF5C70;
+                    g.fill(sx, y + 25, sx + 16, y + 27, 0xFF39485B);
+                    g.fill(sx, y + 25, sx + Math.round(16 * ratio), y + 27, color);
+                }
+            } else {
+                g.drawString(client.font, new String[]{"B","L","C","H"}[i], sx + 4, y + 10, 0xFF60738D, false);
+            }
+        }
+
+        if (ClientConfig.showEffects || ClientConfig.showPotionDetails) {
+            var effects = player.getActiveEffects().stream().limit(5).toList();
+            if (!effects.isEmpty()) {
+                int px = sw - 150, py = 12;
+                int ph = 23 + effects.size() * 22;
+                g.fill(px, py, px + 138, py + ph, 0xD909111E);
+                g.fill(px, py, px + 138, py + 2, 0xFF69D8FF);
+                g.drawString(client.font, "POTION EFFECTS", px + 7, py + 7, 0xFFFFFFFF, false);
+                int ry = py + 22;
+                for (var effect : effects) {
+                    String name = Component.translatable(effect.getDescriptionId()).getString();
+                    if (name.length() > 15) name = name.substring(0, 14) + "…";
+                    int sec = Math.max(0, effect.getDuration() / 20);
+                    String time = String.format(Locale.ROOT, "%d:%02d", sec / 60, sec % 60);
+                    g.fill(px + 5, ry, px + 133, ry + 19, 0x66203146);
+                    g.drawString(client.font, name, px + 9, ry + 2, 0xFFF1F5FF, false);
+                    g.drawString(client.font, time, px + 9, ry + 11, 0xFF69D8FF, false);
+                    ry += 22;
+                }
+            }
+        }
+
+        if (ClientConfig.showSessionTime) {
+            long sec = ClientStats.sessionSeconds();
+            String timer = String.format(Locale.ROOT, "%02d:%02d:%02d", sec / 3600, (sec / 60) % 60, sec % 60);
+            int ty = 12;
+            if ((ClientConfig.showEffects || ClientConfig.showPotionDetails) && !player.getActiveEffects().isEmpty())
+                ty += 23 + (int) player.getActiveEffects().stream().limit(5).count() * 22 + 7;
+            int tx = sw - 150;
+            g.fill(tx, ty, tx + 138, ty + 34, 0xD909111E);
+            g.fill(tx, ty, tx + 138, ty + 2, 0xFF4B9EFF);
+            g.drawString(client.font, "SESSION TIMER", tx + 7, ty + 6, 0xFF9AADC5, false);
+            g.drawString(client.font, timer, tx + 7, ty + 18, 0xFFFFFFFF, false);
+        }
     }
 
     private static void addArmorDurability(List<String> lines, Player player) {
