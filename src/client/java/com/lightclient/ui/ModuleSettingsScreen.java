@@ -7,17 +7,32 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+
 public final class ModuleSettingsScreen extends Screen {
     private static final int BLUE = 0xFF258BFF;
     private final Screen parent;
     private final String moduleName;
     private final String description;
+    private final BooleanSupplier enabled;
+    private final Consumer<Boolean> setEnabled;
 
     public ModuleSettingsScreen(Screen parent, String moduleName, String description) {
         super(Component.literal(moduleName + " Settings"));
         this.parent = parent;
         this.moduleName = moduleName;
         this.description = description;
+        switch (moduleName) {
+            case "Master HUD" -> { enabled = () -> ClientConfig.hudEnabled; setEnabled = v -> ClientConfig.hudEnabled = v; }
+            case "Health" -> { enabled = () -> ClientConfig.showHealth; setEnabled = v -> ClientConfig.showHealth = v; }
+            case "Hunger" -> { enabled = () -> ClientConfig.showHunger; setEnabled = v -> ClientConfig.showHunger = v; }
+            case "Armor" -> { enabled = () -> ClientConfig.showArmor; setEnabled = v -> ClientConfig.showArmor = v; }
+            case "FPS Counter" -> { enabled = () -> ClientConfig.showFps; setEnabled = v -> ClientConfig.showFps = v; }
+            case "Coordinates" -> { enabled = () -> ClientConfig.showCoordinates; setEnabled = v -> ClientConfig.showCoordinates = v; }
+            case "Effect Counter" -> { enabled = () -> ClientConfig.showEffects; setEnabled = v -> ClientConfig.showEffects = v; }
+            default -> { enabled = () -> ClientConfig.compactHud; setEnabled = v -> ClientConfig.compactHud = v; }
+        }
     }
 
     @Override protected void init() {
@@ -25,16 +40,23 @@ public final class ModuleSettingsScreen extends Screen {
         int panelWidth = Math.min(330, width - 20);
         int left = (width - panelWidth) / 2;
         int top = Math.max(16, (height - 170) / 2);
+        addRenderableWidget(Button.builder(Component.literal(moduleName + "  [" +
+                (enabled.getAsBoolean() ? "ENABLED" : "DISABLED") + "]"), b -> {
+            boolean value = !enabled.getAsBoolean();
+            setEnabled.accept(value);
+            ClientConfig.save();
+            b.setMessage(Component.literal(moduleName + "  [" + (value ? "ENABLED" : "DISABLED") + "]"));
+        }).bounds(left + 14, top + 78, panelWidth - 28, 22).build());
         addRenderableWidget(Button.builder(Component.literal("Compact HUD spacing  [" +
                 (ClientConfig.compactHud ? "ON" : "OFF") + "]"), b -> {
             ClientConfig.compactHud = !ClientConfig.compactHud;
             ClientConfig.save();
             b.setMessage(Component.literal("Compact HUD spacing  [" +
                     (ClientConfig.compactHud ? "ON" : "OFF") + "]"));
-        }).bounds(left + 14, top + 78, panelWidth - 28, 22).build());
+        }).bounds(left + 14, top + 104, panelWidth - 28, 22).build());
         addRenderableWidget(Button.builder(Component.literal("Back to menu"),
                 b -> Minecraft.getInstance().setScreen(parent))
-                .bounds(left + 14, top + 122, panelWidth - 28, 22).build());
+                .bounds(left + 14, top + 134, panelWidth - 28, 22).build());
     }
 
     @Override public void render(GuiGraphics g, int mx, int my, float tick) {
@@ -46,7 +68,7 @@ public final class ModuleSettingsScreen extends Screen {
         g.fill(left, top, left + panelWidth, top + 2, BLUE);
         g.drawCenteredString(font, moduleName.toUpperCase(), width / 2, top + 14, 0xFFFFFFFF);
         g.drawCenteredString(font, description, width / 2, top + 39, 0xFF9AC8FF);
-        g.drawCenteredString(font, "Module settings", width / 2, top + 60, 0xFFDEE9F8);
+        g.drawCenteredString(font, "MODULE CONFIGURATION", width / 2, top + 60, 0xFFDEE9F8);
         super.render(g, mx, my, tick);
     }
 
