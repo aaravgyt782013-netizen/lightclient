@@ -31,6 +31,9 @@ public final class ClientConfig {
     public static boolean showDirection = true;
     public static boolean showBiome = false;
     public static boolean showClock = false;
+    public static boolean showSaturation = true;
+    public static boolean showMovementSpeed = false;
+    public static boolean showSessionTime = false;
     public static boolean showItemDurability = true;
     public static boolean showFoodPreview = true;
     public static boolean showTargetInfo = false;
@@ -54,6 +57,7 @@ public final class ClientConfig {
             showArmorDurability=d.showArmorDurability; showArrows=d.showArrows;
             showInventoryCounters=d.showInventoryCounters; showPotionDetails=d.showPotionDetails;
             showDirection=d.showDirection; showBiome=d.showBiome; showClock=d.showClock;
+            showSaturation=d.showSaturation; showMovementSpeed=d.showMovementSpeed; showSessionTime=d.showSessionTime;
             showItemDurability=d.showItemDurability; showFoodPreview=d.showFoodPreview;
             showTargetInfo=d.showTargetInfo; lowFire=d.lowFire;
             hidePotionParticles=d.hidePotionParticles; hideExplosionParticles=d.hideExplosionParticles;
@@ -74,6 +78,7 @@ public final class ClientConfig {
             d.showArmorDurability=showArmorDurability; d.showArrows=showArrows;
             d.showInventoryCounters=showInventoryCounters; d.showPotionDetails=showPotionDetails;
             d.showDirection=showDirection; d.showBiome=showBiome; d.showClock=showClock;
+            d.showSaturation=showSaturation; d.showMovementSpeed=showMovementSpeed; d.showSessionTime=showSessionTime;
             d.showItemDurability=showItemDurability; d.showFoodPreview=showFoodPreview;
             d.showTargetInfo=showTargetInfo; d.lowFire=lowFire;
             d.hidePotionParticles=hidePotionParticles; d.hideExplosionParticles=hideExplosionParticles;
@@ -91,6 +96,7 @@ public final class ClientConfig {
         boolean showHeldItem = false, compactHud = false;
         boolean showArmorDurability = true, showArrows = true, showInventoryCounters = true;
         boolean showPotionDetails = false, showDirection = true, showBiome = false, showClock = false;
+        boolean showSaturation = true, showMovementSpeed = false, showSessionTime = false;
         boolean showItemDurability = true, showFoodPreview = true, showTargetInfo = false;
         boolean lowFire = false, hidePotionParticles = false, hideExplosionParticles = false;
         boolean toggleSprint = false, fullbright = false;
