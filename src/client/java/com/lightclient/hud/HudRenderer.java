@@ -132,37 +132,36 @@ public final class HudRenderer {
     }
 
     private static void renderKeystrokes(GuiGraphics g, Minecraft client) {
-        int sw = client.getWindow().getGuiScaledWidth();
         int sh = client.getWindow().getGuiScaledHeight();
         int key = ClientConfig.compactHud ? 18 : 22;
         int gap = 3;
+        if (sh < 300) { key = 16; gap = 2; }
+        int rows = 4;
         int width = key * 3 + gap * 2;
+        int height = key * rows + gap * (rows - 1);
         int x = 10;
-        int y = sh - key * 3 - gap * 2 - 12;
-        // Keep the widget clear of the vanilla hotbar and scale it for smaller windows.
-        if (sh < 300) {
-            key = 16;
-            gap = 2;
-            width = key * 3 + gap * 2;
-            y = sh - key * 3 - gap * 2 - 6;
-        }
-        // Short labels keep every key legible on compact screens.
-        String[] labels = {"", "W", "", "A", "S", "D", "J", "SP", "SH"};
+        int y = sh - height - (sh < 300 ? 6 : 12);
+
+        String[] labels = {"", "W", "", "A", "S", "D", "LMB", "RMB", "", "J", "SP", "SH"};
         boolean[] pressed = {
                 false, client.options.keyUp.isDown(), false,
                 client.options.keyLeft.isDown(), client.options.keyDown.isDown(), client.options.keyRight.isDown(),
+                client.options.keyAttack.isDown(), client.options.keyUse.isDown(), false,
                 client.options.keyJump.isDown(), client.options.keySprint.isDown(), client.options.keyShift.isDown()
         };
-        g.fill(x - 3, y - 3, x + width + 3, y + key * 3 + gap * 2 + 3, 0xB809111E);
+        g.fill(x - 3, y - 3, x + width + 3, y + height + 3, 0xB809111E);
         for (int i = 0; i < labels.length; i++) {
             if (labels[i].isEmpty()) continue;
             int col = i % 3;
             int row = i / 3;
             int bx = x + col * (key + gap);
             int by = y + row * (key + gap);
-            g.fill(bx, by, bx + key, by + key, pressed[i] ? 0xFF287BD0 : 0xFF1B2A3D);
-            g.fill(bx, by, bx + key, by + 2, pressed[i] ? 0xFF78D9FF : 0xFF334B67);
-            g.drawCenteredString(client.font, Component.literal(labels[i]), bx + key / 2, by + (key - 8) / 2, 0xFFF2F7FF);
+            int buttonWidth = (i == 6 || i == 7) ? key : key;
+            g.fill(bx, by, bx + buttonWidth, by + key, pressed[i] ? 0xFF287BD0 : 0xFF1B2A3D);
+            g.fill(bx, by, bx + buttonWidth, by + 2, pressed[i] ? 0xFF78D9FF : 0xFF334B67);
+            String label = labels[i];
+            if ((i == 6 || i == 7) && key < 20) label = i == 6 ? "L" : "R";
+            g.drawCenteredString(client.font, Component.literal(label), bx + buttonWidth / 2, by + (key - 8) / 2, 0xFFF2F7FF);
         }
     }
 
