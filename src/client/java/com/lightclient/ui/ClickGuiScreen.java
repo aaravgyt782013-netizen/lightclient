@@ -11,9 +11,15 @@ public final class ClickGuiScreen extends Screen {
     private static final int BLUE = 0xFF258BFF;
     private static final int PANEL_WIDTH = 270;
     private static final int PANEL_HEIGHT = 250;
+    private final Screen parent;
 
     public ClickGuiScreen() {
+        this(null);
+    }
+
+    public ClickGuiScreen(Screen parent) {
         super(Component.literal("LightClient Settings"));
+        this.parent = parent;
     }
 
     @Override
@@ -55,7 +61,6 @@ public final class ClickGuiScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        // Draw a simple opaque panel instead of calling version-sensitive background helpers.
         graphics.fill(0, 0, this.width, this.height, 0xA9000000);
         int left = (this.width - PANEL_WIDTH) / 2;
         int top = Math.max(12, (this.height - PANEL_HEIGHT) / 2);
@@ -70,7 +75,7 @@ public final class ClickGuiScreen extends Screen {
     @Override
     public void onClose() {
         ClientConfig.save();
-        Minecraft.getInstance().setScreen(null);
+        Minecraft.getInstance().setScreen(parent);
     }
 
     @Override
