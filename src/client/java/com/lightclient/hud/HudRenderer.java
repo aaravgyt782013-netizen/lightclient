@@ -37,7 +37,7 @@ public final class HudRenderer {
             var info = client.getConnection() == null ? null : client.getConnection().getPlayerInfo(player.getUUID());
             lines.add("PING " + (info == null ? "--" : info.getLatency() + " ms"));
         }
-        if (ClientConfig.showCps) lines.add("CPS " + ClientStats.cps());
+        if (ClientConfig.showCps) lines.add("CPS L " + ClientStats.cps() + "  R " + ClientStats.rightCps());
         if (ClientConfig.showCoordinates) {
             lines.add(String.format(Locale.ROOT, "XYZ %.0f / %.0f / %.0f", player.getX(), player.getY(), player.getZ()));
         }
