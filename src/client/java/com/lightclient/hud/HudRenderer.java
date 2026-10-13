@@ -146,22 +146,28 @@ public final class HudRenderer {
             width = key * 3 + gap * 2;
             y = sh - key * 3 - gap * 2 - 6;
         }
-        String[] labels = {"", "W", "", "A", "S", "D", "JUMP", "SPR", "SNEAK"};
+        // Use full-width action keys so labels never clip on compact HUD sizes.
+        String[] labels = {"", "W", "", "A", "S", "D", "JUMP", "SPRINT", "SNEAK"};
         boolean[] pressed = {
                 false, client.options.keyUp.isDown(), false,
                 client.options.keyLeft.isDown(), client.options.keyDown.isDown(), client.options.keyRight.isDown(),
                 client.options.keyJump.isDown(), client.options.keySprint.isDown(), client.options.keyShift.isDown()
         };
-        g.fill(x - 3, y - 3, x + width + 3, y + key * 3 + gap * 2 + 3, 0xB809111E);
-        for (int i = 0; i < labels.length; i++) {
-            if (labels[i].isEmpty()) continue;
+        int actionWidth = key * 2 + gap;
+        int widgetWidth = key * 3 + gap * 2;
+        int widgetHeight = key * 3 + gap * 2;
+        g.fill(x - 3, y - 3, x + widgetWidth + 3, y + widgetHeight + 3, 0xB809111E);
+        for (int i = 1; i < labels.length; i++) {
             int col = i % 3;
             int row = i / 3;
             int bx = x + col * (key + gap);
             int by = y + row * (key + gap);
-            g.fill(bx, by, bx + key, by + key, pressed[i] ? 0xFF287BD0 : 0xFF1B2A3D);
-            g.fill(bx, by, bx + key, by + 2, pressed[i] ? 0xFF78D9FF : 0xFF334B67);
-            g.drawCenteredString(client.font, Component.literal(labels[i]), bx + key / 2, by + (key - 8) / 2, 0xFFF2F7FF);
+            int buttonWidth = row == 2 ? actionWidth : key;
+            if (row == 2 && col == 2) continue;
+            if (row == 2 && col == 1) bx = x + key + gap;
+            g.fill(bx, by, bx + buttonWidth, by + key, pressed[i] ? 0xFF287BD0 : 0xFF1B2A3D);
+            g.fill(bx, by, bx + buttonWidth, by + 2, pressed[i] ? 0xFF78D9FF : 0xFF334B67);
+            g.drawCenteredString(client.font, Component.literal(labels[i]), bx + buttonWidth / 2, by + (key - 8) / 2, 0xFFF2F7FF);
         }
     }
 
