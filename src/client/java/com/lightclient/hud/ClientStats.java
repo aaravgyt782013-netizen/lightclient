@@ -10,6 +10,7 @@ public final class ClientStats {
     private static final Deque<Long> RIGHT_CLICKS = new ArrayDeque<>();
     private static boolean wasAttackDown;
     private static boolean wasUseDown;
+    private static final long SESSION_START = System.currentTimeMillis();
     private ClientStats() {}
 
     public static void tick(Minecraft client) {
@@ -29,6 +30,10 @@ public final class ClientStats {
         wasUseDown = useDown;
         while (!LEFT_CLICKS.isEmpty() && now - LEFT_CLICKS.peekFirst() > 1000L) LEFT_CLICKS.removeFirst();
         while (!RIGHT_CLICKS.isEmpty() && now - RIGHT_CLICKS.peekFirst() > 1000L) RIGHT_CLICKS.removeFirst();
+    }
+
+    public static long sessionSeconds() {
+        return Math.max(0L, (System.currentTimeMillis() - SESSION_START) / 1000L);
     }
 
     public static int cps() {
