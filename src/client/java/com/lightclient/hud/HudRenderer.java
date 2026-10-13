@@ -88,17 +88,9 @@ public final class HudRenderer {
             lines.add("TARGET " + target.getName().getString() + " " + format(target.getHealth()) + " HP");
         }
         if (ClientConfig.showClock) lines.add("TIME " + LocalTime.now().format(CLOCK));
-        if (ClientConfig.showKeystrokes) {
-            String keys = (client.options.keyUp.isDown() ? "W" : "w") + " "
-                    + (client.options.keyLeft.isDown() ? "A" : "a") + " "
-                    + (client.options.keyDown.isDown() ? "S" : "s") + " "
-                    + (client.options.keyRight.isDown() ? "D" : "d")
-                    + "   J:" + (client.options.keyJump.isDown() ? "●" : "○")
-                    + "   Sprint:" + (client.options.keySprint.isDown() ? "ON" : "off");
-            lines.add("KEYS " + keys);
-        }
-
         if (!lines.isEmpty()) renderStatWidgets(graphics, client, lines);
+
+        if (ClientConfig.showKeystrokes) renderKeystrokes(graphics, client);
 
         // Dedicated armor, potion and timer widgets.
         if (ClientConfig.showArmor || ClientConfig.showArmorDurability || ClientConfig.showEffects || ClientConfig.showPotionDetails || ClientConfig.showSessionTime) renderExtraHud(graphics, client, player);
@@ -136,6 +128,40 @@ public final class HudRenderer {
                 g.drawString(client.font, Component.literal(value), valueX, cardY + (rowHeight - 8) / 2, 0xFFF1F5FF, false);
             }
             index++;
+        }
+    }
+
+    private static void renderKeystrokes(GuiGraphics g, Minecraft client) {
+        int sw = client.getWindow().getGuiScaledWidth();
+        int sh = client.getWindow().getGuiScaledHeight();
+        int key = ClientConfig.compactHud ? 18 : 22;
+        int gap = 3;
+        int width = key * 3 + gap * 2;
+        int x = 10;
+        int y = sh - key * 3 - gap * 2 - 12;
+        // Keep the widget clear of the vanilla hotbar and scale it for smaller windows.
+        if (sh < 300) {
+            key = 16;
+            gap = 2;
+            width = key * 3 + gap * 2;
+            y = sh - key * 3 - gap * 2 - 6;
+        }
+        String[] labels = {"", "W", "", "A", "S", "D", "JUMP", "SPR", "SNEAK"};
+        boolean[] pressed = {
+                false, client.options.keyUp.isDown(), false,
+                client.options.keyLeft.isDown(), client.options.keyDown.isDown(), client.options.keyRight.isDown(),
+                client.options.keyJump.isDown(), client.options.keySprint.isDown(), client.options.keyShift.isDown()
+        };
+        g.fill(x - 3, y - 3, x + width + 3, y + key * 3 + gap * 2 + 3, 0xB809111E);
+        for (int i = 0; i < labels.length; i++) {
+            if (labels[i].isEmpty()) continue;
+            int col = i % 3;
+            int row = i / 3;
+            int bx = x + col * (key + gap);
+            int by = y + row * (key + gap);
+            g.fill(bx, by, bx + key, by + key, pressed[i] ? 0xFF287BD0 : 0xFF1B2A3D);
+            g.fill(bx, by, bx + key, by + 2, pressed[i] ? 0xFF78D9FF : 0xFF334B67);
+            g.drawCenteredString(client.font, Component.literal(labels[i]), bx + key / 2, by + (key - 8) / 2, 0xFFF2F7FF);
         }
     }
 
