@@ -35,10 +35,6 @@ public final class HudRenderer {
             double speed = Math.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) * 20.0;
             lines.add("SPEED " + String.format(Locale.ROOT, "%.2f", speed) + " blocks/s");
         }
-        if (ClientConfig.showSessionTime) {
-            long seconds = ClientStats.sessionSeconds();
-            lines.add(String.format(Locale.ROOT, "SESSION %02d:%02d:%02d", seconds / 3600, (seconds / 60) % 60, seconds % 60));
-        }
         if (ClientConfig.showArmor) lines.add("ARMOR " + player.getArmorValue());
         if (ClientConfig.showArmorDurability) addArmorDurability(lines, player);
         if (ClientConfig.showFps) lines.add("FPS " + client.getFps());
@@ -57,13 +53,6 @@ public final class HudRenderer {
             lines.add("BIOME " + biome);
         }
         if (ClientConfig.showEffects) lines.add("EFFECTS " + player.getActiveEffects().size());
-        if (ClientConfig.showPotionDetails) {
-            player.getActiveEffects().stream().limit(4).forEach(effect -> {
-                String name = Component.translatable(effect.getDescriptionId()).getString();
-                int seconds = Math.max(0, effect.getDuration() / 20);
-                lines.add("POTION " + name + " " + seconds + "s");
-            });
-        }
         if (ClientConfig.showHeldItem) {
             ItemStack stack = player.getMainHandItem();
             if (!stack.isEmpty()) lines.add("ITEM " + stack.getHoverName().getString() + " x" + stack.getCount());
@@ -144,7 +133,7 @@ public final class HudRenderer {
         }
 
         // Dedicated armor, potion and timer widgets.
-        renderExtraHud(graphics, client, player);
+        if (ClientConfig.showArmor || ClientConfig.showArmorDurability || ClientConfig.showEffects || ClientConfig.showPotionDetails || ClientConfig.showSessionTime) renderExtraHud(graphics, client, player);
     }
 
     private static void renderExtraHud(GuiGraphics g, Minecraft client, Player player) {
@@ -152,6 +141,7 @@ public final class HudRenderer {
         int sh = client.getWindow().getGuiScaledHeight();
         int x = (sw - 112) / 2;
         int y = sh - 91 - 34;
+        if (ClientConfig.showArmor || ClientConfig.showArmorDurability) {
         g.fill(x, y, x + 112, y + 30, 0xC909111E);
         g.fill(x, y, x + 112, y + 2, 0xFF4B9EFF);
         net.minecraft.world.entity.EquipmentSlot[] slots = {
@@ -174,6 +164,7 @@ public final class HudRenderer {
             } else {
                 g.drawString(client.font, new String[]{"B","L","C","H"}[i], sx + 4, y + 10, 0xFF60738D, false);
             }
+        }
         }
 
         if (ClientConfig.showEffects || ClientConfig.showPotionDetails) {
