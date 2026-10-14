@@ -5,11 +5,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.Screens;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.PauseScreen;
-import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -34,16 +29,6 @@ public final class FastClientInspired implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openMenu.consumeClick()) {
                 if (client.player != null) client.setScreen(new ClientMenuScreen(client.screen));
-            }
-        });
-
-        ScreenEvents.AFTER_INIT.register((screenClient, screen, scaledWidth, scaledHeight) -> {
-            if (screen instanceof TitleScreen || screen instanceof PauseScreen) {
-                int x = Math.max(8, scaledWidth - 138);
-                String label = screen instanceof TitleScreen ? "✦ LightClient" : "✦ LightClient Settings";
-                Screens.getButtons(screen).add(Button.builder(Component.literal(label),
-                        button -> screenClient.setScreen(new ClientMenuScreen(screen)))
-                        .bounds(x, 10, 128, 24).build());
             }
         });
 
