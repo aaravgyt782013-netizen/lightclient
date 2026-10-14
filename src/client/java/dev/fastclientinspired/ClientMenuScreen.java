@@ -2,66 +2,94 @@ package dev.fastclientinspired;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public final class ClientMenuScreen extends Screen {
+    private enum Category { HUD, RENDER, PLAYER, MISC }
+
+    private static final Map<Category, List<String>> CATEGORIES = Map.of(
+            Category.HUD, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage", "Keystrokes HUD", "Health Display"),
+            Category.RENDER, List.of("Fullbright", "Low Fire", "Particles"),
+            Category.PLAYER, List.of("Zoom", "Time Changer", "Weather Changer"),
+            Category.MISC, List.of()
+    );
+
     private final Screen parent;
-    private final Map<String, Boolean> modules = new LinkedHashMap<>();
+    private Category selected = Category.HUD;
+    private EditBox search;
     private int panelLeft;
     private int panelTop;
 
     public ClientMenuScreen(Screen parent) {
         super(Component.literal("FastClient-Inspired"));
         this.parent = parent;
-        modules.put("Keystrokes HUD", false);
-        modules.put("FPS Counter", true);
-        modules.put("Coordinates", false);
-        modules.put("Crosshair", true);
-        modules.put("Low Fire", false);
-        modules.put("Particles", true);
     }
 
     @Override
     protected void init() {
-        panelLeft = (this.width - 340) / 2;
-        panelTop = (this.height - 250) / 2;
-        int x = panelLeft + 18;
-        int y = panelTop + 66;
-        int index = 0;
-        for (String name : modules.keySet()) {
-            final String moduleName = name;
-            int col = index % 2;
-            int row = index / 2;
-            addRenderableWidget(Button.builder(moduleLabel(moduleName), button -> {
-                modules.put(moduleName, !modules.get(moduleName));
-                button.setMessage(moduleLabel(moduleName));
-                FastClientInspired.showNotice(moduleName + (modules.get(moduleName) ? " enabled" : " disabled"));
-            }).bounds(x + col * 154, y + row * 38, 146, 30).build());
-            index++;
+        clearWidgets();
+        panelLeft = Math.max(12, (width - 500) / 2);
+        panelTop = Math.max(12, (height - 330) / 2);
+
+        int tabX = panelLeft + 14;
+        int tabY = panelTop + 62;
+        int tabIndex = 0;
+        for (Category category : Category.values()) {
+            final Category target = category;
+            addRenderableWidget(Button.builder(Component.literal((selected == category ? "● " : "") + category.name()),
+                    button -> {
+                        selected = target;
+                        init();
+                    }).bounds(tabX + tabIndex * 116, tabY, 108, 26).build());
+            tabIndex++;
         }
+
+        search = new EditBox(font, panelLeft + 14, panelTop + 98, 472, 24, Component.literal("Search modules"));
+        search.setHint(Component.literal("Search modules..."));
+        search.setValue("");
+        addRenderableWidget(search);
+
+        List<String> modules = CATEGORIES.get(selected);
+        int row = 0;
+        for (String module : modules) {
+            if (!search.getValue().isBlank()
+                    && !module.toLowerCase(Locale.ROOT).contains(search.getValue().toLowerCase(Locale.ROOT))) continue;
+            int col = row % 2;
+            int line = row / 2;
+            int x = panelLeft + 14 + col * 238;
+            int y = panelTop + 134 + line * 38;
+            addRenderableWidget(Button.builder(moduleLabel(module), button -> {
+                ClientConfig.setEnabled(module, !ClientConfig.isEnabled(module));
+                button.setMessage(moduleLabel(module));
+            }).bounds(x, y, 228, 30).build());
+            row++;
+        }
+
         addRenderableWidget(Button.builder(Component.literal("Done"), button -> onClose())
-                .bounds(panelLeft + 18, panelTop + 206, 304, 28).build());
+                .bounds(panelLeft + 14, panelTop + 286, 472, 28).build());
     }
 
-    private Component moduleLabel(String name) {
-        return Component.literal((Boolean.TRUE.equals(modules.get(name)) ? "●  " : "○  ") + name);
+    private Component moduleLabel(String module) {
+        return Component.literal((ClientConfig.isEnabled(module) ? "●  " : "○  ") + module);
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         renderBackground(graphics, mouseX, mouseY, delta);
-        int right = panelLeft + 340;
-        int bottom = panelTop + 250;
+        int right = panelLeft + 500;
+        int bottom = panelTop + 330;
         graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF55C7FF);
         graphics.fill(panelLeft, panelTop, right, bottom, 0xF0141824);
         graphics.fill(panelLeft, panelTop, right, panelTop + 48, 0xFF202B42);
-        graphics.drawString(font, "FASTCLIENT-INSPIRED", panelLeft + 18, panelTop + 13, 0xFFFFFFFF, false);
-        graphics.drawString(font, "CLIENT MENU  /  RIGHT SHIFT", panelLeft + 18, panelTop + 32, 0xFF9DB4D8, false);
-        graphics.drawString(font, "MODULES", panelLeft + 18, panelTop + 54, 0xFF55C7FF, false);
+        graphics.drawString(font, "FASTCLIENT-INSPIRED", panelLeft + 16, panelTop + 12, 0xFFFFFFFF, false);
+        graphics.drawString(font, "CLIENT CONFIGURATION  /  RIGHT SHIFT", panelLeft + 16, panelTop + 30, 0xFF9DB4D8, false);
+        graphics.drawString(font, "MODULES  ·  " + selected.name(), panelLeft + 16, panelTop + 51, 0xFF55C7FF, false);
         super.render(graphics, mouseX, mouseY, delta);
     }
 
