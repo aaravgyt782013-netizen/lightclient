@@ -187,7 +187,8 @@ public final class ClickGuiScreen extends Screen {
     @Override
     public void render(GuiGraphics g, int mx, int my, float tick) {
         g.fill(0, 0, width, height, 0xD0060A12);
-        g.fill(panelLeft - 2, panelTop - 2, panelLeft + panelWidth + 2, panelTop + panelHeight + 2, 0x663B76B8);\n        g.fill(panelLeft, panelTop, panelLeft + panelWidth, panelTop + panelHeight, PANEL);
+        g.fill(panelLeft - 2, panelTop - 2, panelLeft + panelWidth + 2, panelTop + panelHeight + 2, 0x663B76B8);
+        g.fill(panelLeft, panelTop, panelLeft + panelWidth, panelTop + panelHeight, PANEL);
         g.fill(panelLeft, panelTop, panelLeft + 3, panelTop + panelHeight, BLUE);
         g.fill(panelLeft + 3, panelTop + 3, panelLeft + sidebarWidth, panelTop + panelHeight - 3, SIDEBAR);
         g.fill(panelLeft + sidebarWidth, panelTop + 3, panelLeft + sidebarWidth + 1, panelTop + panelHeight - 3, 0xFF26364A);
@@ -209,7 +210,8 @@ public final class ClickGuiScreen extends Screen {
             int y = rowY + (i - scrollOffset) * (ROW_HEIGHT + ROW_GAP);
             boolean hovered = mx >= listLeft && mx < listLeft + listWidth && my >= y && my < y + ROW_HEIGHT;
             boolean enabled = m.get().getAsBoolean();
-            g.fill(listLeft, y, listLeft + listWidth, y + ROW_HEIGHT, hovered ? ROW_HOVER : ROW);\n            g.fill(listLeft + 3, y + 3, listLeft + listWidth - 3, y + 4, hovered ? 0xFF2A4664 : 0xFF1B2A3C);
+            g.fill(listLeft, y, listLeft + listWidth, y + ROW_HEIGHT, hovered ? ROW_HOVER : ROW);
+            g.fill(listLeft + 3, y + 3, listLeft + listWidth - 3, y + 4, hovered ? 0xFF2A4664 : 0xFF1B2A3C);
             g.fill(listLeft, y, listLeft + 2, y + ROW_HEIGHT, m.implemented() && enabled ? BLUE : 0xFF29384B);
             g.drawString(font, m.name(), listLeft + 10, y + 7, m.implemented() ? 0xFFF1F6FF : MUTED, false);
             g.drawString(font, m.description(), listLeft + 10, y + 25, 0xFF91A5BF, false);
