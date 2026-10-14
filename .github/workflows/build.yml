@@ -1,4 +1,4 @@
-name: FastClient-Inspired Build
+name: LightClient Build
 on:
   push:
   pull_request:
@@ -21,9 +21,9 @@ jobs:
         run: gradle --no-daemon build
       - uses: actions/upload-artifact@v4
         with:
-          name: FastClient-Inspired-${{ github.sha }}
+          name: LightClient-${{ github.sha }}
           path: |
-            build/libs/fastclient-inspired-*.jar
+            build/libs/LightClient-*.jar
             !build/libs/*-sources.jar
             !build/libs/*-dev.jar
           if-no-files-found: error

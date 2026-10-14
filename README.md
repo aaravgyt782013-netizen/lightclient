@@ -1,23 +1,27 @@
-# FastClient-Inspired
+# LightClient
 
-An original client-side Fabric mod for Minecraft Java Edition 1.21.11, built with Java 21. It aims for a polished, configurable client experience inspired by common PvP-client workflows without copying proprietary FastClient code or branding.
+LightClient is an original client-side Fabric mod for Minecraft Java Edition 1.21.11, built with Java 21.
 
-## Current foundation
-- Right Shift opens the in-game client menu.
-- Dark, clean menu layout with working module toggles.
-- Module preferences saved to the Minecraft config directory.
-- GitHub Actions builds the mod on pushes and pull requests.
+## Current features
+- Right Shift opens the in-game LightClient menu.
+- LightClient buttons are added through Fabric's screen event API, without custom screen mixins.
+- Configurable HUD: FPS, coordinates, ping, memory, keystrokes, health, facing, world time, held-item durability, armor durability, biome, dimension, speed, and compass.
+- HUD position editor with save/reset controls.
+- Enable All / Disable All controls for HUD modules.
+- Save/load/reset module profiles.
+
+The Performance and Visuals categories are informational placeholders; they do not claim to change Minecraft's graphics engine or rendering pipeline yet.
 
 ## Build
-Install Java 21 and Gradle 9.3.1, then run:
+Use Java 21 and run:
 
 ```sh
 gradle --no-daemon build
 ```
 
-The installable JAR is generated under `build/libs/`.
+The installable mod JAR is generated under `build/libs/LightClient-*.jar`.
 
 ## Controls
-- **Right Shift** — open/close the client menu.
+- **Right Shift** — open the LightClient menu.
 
-This project is an independent community project and is not affiliated with FastClient.
+LightClient is an independent community project and is not affiliated with other Minecraft client projects.

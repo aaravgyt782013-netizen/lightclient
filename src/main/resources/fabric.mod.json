@@ -1,18 +1,15 @@
 {
   "schemaVersion": 1,
-  "id": "fastclientinspired",
+  "id": "lightclient",
   "version": "${version}",
-  "name": "FastClient-Inspired",
-  "description": "An original configurable Minecraft client-side enhancement mod.",
+  "name": "LightClient",
+  "description": "LightClient is an original configurable client-side enhancement mod for Minecraft Java Edition.",
   "authors": ["FastClient-Inspired contributors"],
   "license": "MIT",
   "environment": "client",
   "entrypoints": {
     "client": ["dev.fastclientinspired.FastClientInspired"]
   },
-  "mixins": [
-    "fastclientinspired.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=0.19.3",
     "minecraft": "~1.21.11",

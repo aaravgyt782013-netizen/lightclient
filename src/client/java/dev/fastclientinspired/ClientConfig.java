@@ -12,8 +12,8 @@ import java.util.Map;
 
 public final class ClientConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("fastclient-inspired.json");
-    private static final Path HUD_FILE = FabricLoader.getInstance().getConfigDir().resolve("fastclient-inspired-hud.json");
+    private static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("lightclient.json");
+    private static final Path HUD_FILE = FabricLoader.getInstance().getConfigDir().resolve("lightclient-hud.json");
     private static final Path PROFILE_FILE = FabricLoader.getInstance().getConfigDir().resolve("lightclient-profile.json");
     private static final Map<String, Boolean> DEFAULTS = new LinkedHashMap<>();
     private static Map<String, Boolean> enabled = new LinkedHashMap<>();
