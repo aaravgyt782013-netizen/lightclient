@@ -171,7 +171,9 @@ public final class ClientMenuScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        renderBackground(graphics, mouseX, mouseY, delta);
+        // Avoid Minecraft's per-frame blur pass: this screen can be rendered over another
+        // screen that already blurred the frame, which crashes on 1.21.11.
+        graphics.fill(0, 0, width, height, 0xFF0B111B);
         int right = panelLeft + panelWidth;
         int bottom = panelTop + panelHeight;
         graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF4DCBFF);

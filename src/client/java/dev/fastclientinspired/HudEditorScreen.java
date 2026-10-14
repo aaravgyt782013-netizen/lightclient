@@ -36,7 +36,8 @@ public final class HudEditorScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        renderBackground(graphics, mouseX, mouseY, delta);
+        // Use an opaque custom background instead of requesting a second blur pass.
+        graphics.fill(0, 0, width, height, 0xFF0B111B);
         graphics.fill(0, 0, width, 52, 0xE0101624);
         graphics.drawString(font, "HUD EDITOR", 18, 14, 0xFFFFFFFF, false);
         graphics.drawString(font, "Drag the preview panel to move your HUD. Save to keep its position.",
