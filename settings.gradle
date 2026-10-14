@@ -5,4 +5,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-rootProject.name = "lightclient"
+rootProject.name = "fastclient-inspired"

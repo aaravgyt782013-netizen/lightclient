@@ -1,8 +1,23 @@
-# LightClient
+# FastClient-Inspired
 
-A black-and-blue client-side Fabric mod for Minecraft Java 1.21.11, intended for Android Java launchers.
+An original client-side Fabric mod for Minecraft Java Edition 1.21.11, built with Java 21. It aims for a polished, configurable client experience inspired by common PvP-client workflows without copying proprietary FastClient code or branding.
+
+## Current foundation
+- Right Shift opens the in-game client menu.
+- Dark, clean menu layout with working module toggles.
+- Module preferences saved to the Minecraft config directory.
+- GitHub Actions builds the mod on pushes and pull requests.
 
 ## Build
-Requires Java 21. Run `gradle build`; install the remapped JAR from `build/libs/`.
+Install Java 21 and Gradle 9.3.1, then run:
 
-The first milestone provides a custom menu, configurable HUD, persistent settings, and GitHub Actions builds. Advanced combat and visual features will be implemented in later tested releases.
+```sh
+gradle --no-daemon build
+```
+
+The installable JAR is generated under `build/libs/`.
+
+## Controls
+- **Right Shift** — open/close the client menu.
+
+This project is an independent community project and is not affiliated with FastClient.

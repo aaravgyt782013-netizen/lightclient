@@ -1,4 +1,4 @@
-name: LightClient Build
+name: FastClient-Inspired Build
 on:
   push:
   pull_request:
@@ -10,23 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "9.3.1"
-      - name: Build remapped mod
+      - name: Build mod
         run: gradle --no-daemon build
-      - name: Upload installable JAR
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: LightClient-${{ github.sha }}
+          name: FastClient-Inspired-${{ github.sha }}
           path: |
-            build/libs/lightclient-*.jar
+            build/libs/fastclient-inspired-*.jar
             !build/libs/*-sources.jar
             !build/libs/*-dev.jar
           if-no-files-found: error

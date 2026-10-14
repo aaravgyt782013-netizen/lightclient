@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "id": "lightclient",
+  "id": "fastclientinspired",
   "version": "${version}",
-  "name": "LightClient",
-  "description": "A black-and-blue customizable client HUD and visual enhancement mod.",
-  "authors": ["LightClient"],
+  "name": "FastClient-Inspired",
+  "description": "An original configurable Minecraft client-side enhancement mod.",
+  "authors": ["FastClient-Inspired contributors"],
   "license": "MIT",
   "environment": "client",
   "entrypoints": {
-    "client": ["com.lightclient.LightClient"]
+    "client": ["dev.fastclientinspired.FastClientInspired"]
   },
   "depends": {
     "fabricloader": ">=0.19.3",
