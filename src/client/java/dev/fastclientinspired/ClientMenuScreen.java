@@ -74,6 +74,15 @@ public final class ClientMenuScreen extends Screen {
                 rebuildModuleButtons();
             });
             addRenderableWidget(search);
+            int controlWidth = Math.max(90, (panelLeft + panelWidth - 20 - contentLeft - 6) / 2);
+            addRenderableWidget(Button.builder(Component.literal("Enable All"), b -> {
+                for (String module : MODULES.get(Category.HUD)) ClientConfig.setEnabled(module, true);
+                rebuildModuleButtons();
+            }).bounds(contentLeft, panelTop + 101, controlWidth, 24).build());
+            addRenderableWidget(Button.builder(Component.literal("Disable All"), b -> {
+                for (String module : MODULES.get(Category.HUD)) ClientConfig.setEnabled(module, false);
+                rebuildModuleButtons();
+            }).bounds(contentLeft + controlWidth + 6, panelTop + 101, controlWidth, 24).build());
             rebuildModuleButtons();
         }
 
@@ -128,7 +137,7 @@ public final class ClientMenuScreen extends Screen {
             int col = row % 2;
             int line = row / 2;
             int x = contentLeft + col * (availableWidth / 2 + 4);
-            int y = panelTop + 112 + line * 38;
+            int y = panelTop + 134 + line * 38;
             int buttonWidth = (availableWidth - 8) / 2;
             Button button = Button.builder(moduleLabel(module), b -> {
                 ClientConfig.setEnabled(module, !ClientConfig.isEnabled(module));
@@ -140,7 +149,7 @@ public final class ClientMenuScreen extends Screen {
         }
     }
 
-    private Component moduleLabel(String module) {
+    private int enabledModuleCount() {\n        int count = 0;\n        for (String module : MODULES.get(Category.HUD)) if (ClientConfig.isEnabled(module)) count++;\n        return count;\n    }\n\n    private Component moduleLabel(String module) {
         return Component.literal((ClientConfig.isEnabled(module) ? "●  ON   " : "○  OFF  ") + module);
     }
 
@@ -169,7 +178,7 @@ public final class ClientMenuScreen extends Screen {
                     contentLeft, panelTop + 108, 0xFFB7C7DF, false);
             graphics.fill(contentLeft, panelTop + 136, right - 18, panelTop + 198, 0xFF1B2940);
             graphics.drawString(font, "HUD SYSTEM", contentLeft + 12, panelTop + 148, 0xFF4DCBFF, false);
-            graphics.drawString(font, "14 configurable HUD modules currently available",
+            graphics.drawString(font, "14 configurable HUD modules  •  " + enabledModuleCount() + " enabled",
                     contentLeft + 12, panelTop + 169, 0xFFEAF4FF, false);
             graphics.fill(contentLeft, panelTop + 210, right - 18, panelTop + 272, 0xFF1B2940);
             graphics.drawString(font, "QUICK ACCESS", contentLeft + 12, panelTop + 222, 0xFF4DCBFF, false);

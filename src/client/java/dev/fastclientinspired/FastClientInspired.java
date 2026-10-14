@@ -60,7 +60,7 @@ public final class FastClientInspired implements ClientModInitializer {
             }
             if (ClientConfig.isEnabled("Biome Display") && client.level != null) {
                 String biome = client.level.getBiome(client.player.blockPosition()).unwrapKey()
-                        .map(Object::toString).orElse("unknown")
+                        .map(key -> key.toString()).orElse("unknown")
                         .replace("ResourceKey[", "").replace("]", "")
                         .replace("minecraft:", "").replace(':', ' ').replace('_', ' ');
                 lines.add("BIOME  " + biome.toUpperCase(Locale.ROOT));
