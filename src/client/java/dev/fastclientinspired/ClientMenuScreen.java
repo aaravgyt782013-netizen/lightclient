@@ -195,58 +195,58 @@ public final class ClientMenuScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Avoid Minecraft's per-frame blur pass: this screen can be rendered over another
         // screen that already blurred the frame, which crashes on 1.21.11.
-        graphics.fill(0, 0, width, height, 0xFF0B111B);
+        graphics.fill(0, 0, width, height, 0xFF050805);
         int right = panelLeft + panelWidth;
         int bottom = panelTop + panelHeight;
-        graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF263B55);
-        graphics.fill(panelLeft, panelTop, right, bottom, 0xF0101624);
-        graphics.fill(panelLeft, panelTop, panelLeft + 3, bottom, 0xFF4DCBFF);
-        graphics.fill(panelLeft, panelTop, right, panelTop + 58, 0xFF1B2940);
-        graphics.fill(panelLeft + 1, panelTop + 59, contentLeft - 4, bottom - 1, 0xFF111B2B);
-        graphics.fill(contentLeft - 10, panelTop + 66, contentLeft - 8, bottom - 54, 0xFF31445F);
+        graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF24552D);
+        graphics.fill(panelLeft, panelTop, right, bottom, 0xF00A100B);
+        graphics.fill(panelLeft, panelTop, panelLeft + 3, bottom, 0xFF39FF14);
+        graphics.fill(panelLeft, panelTop, right, panelTop + 58, 0xFF101D12);
+        graphics.fill(panelLeft + 1, panelTop + 59, contentLeft - 4, bottom - 1, 0xFF0B130D);
+        graphics.fill(contentLeft - 10, panelTop + 66, contentLeft - 8, bottom - 54, 0xFF24432A);
 
-        graphics.drawString(font, "LIGHTCLIENT", panelLeft + 18, panelTop + 12, 0xFFFFFFFF, false);
+        graphics.drawString(font, "LIGHTCLIENT", panelLeft + 18, panelTop + 12, 0xFFF1FFF1, false);
         graphics.drawString(font, "CLIENT EXPERIENCE  •  1.21.11", panelLeft + 18, panelTop + 32,
-                0xFF9DB4D8, false);
+                0xFF8BBF8D, false);
         graphics.drawString(font, label(selected).toUpperCase(Locale.ROOT), contentLeft,
-                panelTop + 16, 0xFF4DCBFF, false);
+                panelTop + 16, 0xFF39FF14, false);
         graphics.drawString(font, "A modular Minecraft client, built into a Fabric mod.",
-                contentLeft, panelTop + 34, 0xFFB7C7DF, false);
+                contentLeft, panelTop + 34, 0xFF9EB49F, false);
 
         if (selected == Category.HOME) {
-            graphics.drawString(font, "WELCOME BACK", contentLeft, panelTop + 88, 0xFFFFFFFF, false);
+            graphics.drawString(font, "WELCOME BACK", contentLeft, panelTop + 88, 0xFFF1FFF1, false);
             graphics.drawString(font, "Your client hub is the starting point for settings and modules.",
-                    contentLeft, panelTop + 108, 0xFFB7C7DF, false);
-            graphics.fill(contentLeft, panelTop + 136, right - 18, panelTop + 198, 0xFF1B2940);
-            graphics.drawString(font, "HUD SYSTEM", contentLeft + 12, panelTop + 148, 0xFF4DCBFF, false);
+                    contentLeft, panelTop + 108, 0xFF9EB49F, false);
+            graphics.fill(contentLeft, panelTop + 136, right - 18, panelTop + 198, 0xFF101D12);
+            graphics.drawString(font, "HUD SYSTEM", contentLeft + 12, panelTop + 148, 0xFF39FF14, false);
             graphics.drawString(font, "14 configurable HUD modules  •  " + enabledModuleCount() + " enabled",
-                    contentLeft + 12, panelTop + 169, 0xFFEAF4FF, false);
-            graphics.fill(contentLeft, panelTop + 210, right - 18, panelTop + 272, 0xFF1B2940);
-            graphics.drawString(font, "QUICK ACCESS", contentLeft + 12, panelTop + 222, 0xFF4DCBFF, false);
+                    contentLeft + 12, panelTop + 169, 0xFFE8F5E9, false);
+            graphics.fill(contentLeft, panelTop + 210, right - 18, panelTop + 272, 0xFF101D12);
+            graphics.drawString(font, "QUICK ACCESS", contentLeft + 12, panelTop + 222, 0xFF39FF14, false);
             graphics.drawString(font, "Manage overlays in HUD Modules, then drag them in HUD Editor.",
-                    contentLeft + 12, panelTop + 243, 0xFFEAF4FF, false);
+                    contentLeft + 12, panelTop + 243, 0xFFE8F5E9, false);
         } else if (selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS) {
             graphics.drawString(font, "Toggle a module to enable or disable it. Choices are saved automatically.",
-                    contentLeft, panelTop + 58, 0xFFB7C7DF, false);
+                    contentLeft, panelTop + 58, 0xFF9EB49F, false);
             if (moduleButtons.isEmpty()) {
                 graphics.drawString(font, "No matching modules. Try a different search.",
-                        contentLeft, panelTop + 120, 0xFFEAF4FF, false);
+                        contentLeft, panelTop + 120, 0xFFE8F5E9, false);
             }
         } else if (selected == Category.PERFORMANCE) {
-            graphics.drawString(font, "PERFORMANCE TOOLKIT", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
+            graphics.drawString(font, "PERFORMANCE TOOLKIT", contentLeft, panelTop + 90, 0xFFF1FFF1, false);
             graphics.drawString(font, "Use Minecraft Video Settings to tune render distance,",
-                    contentLeft, panelTop + 114, 0xFFB7C7DF, false);
+                    contentLeft, panelTop + 114, 0xFF9EB49F, false);
             graphics.drawString(font, "simulation distance, particles, clouds and graphics quality.",
-                    contentLeft, panelTop + 134, 0xFFEAF4FF, false);
+                    contentLeft, panelTop + 134, 0xFFE8F5E9, false);
             graphics.drawString(font, "LightClient will only expose settings it can safely apply.",
-                    contentLeft, panelTop + 164, 0xFFEAF4FF, false);
+                    contentLeft, panelTop + 164, 0xFFE8F5E9, false);
         } else if (selected == Category.VISUALS) {
-            graphics.drawString(font, "VISUAL MODULES", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
+            graphics.drawString(font, "VISUAL MODULES", contentLeft, panelTop + 90, 0xFFF1FFF1, false);
             graphics.drawString(font, "Visual enhancements will be added when their behavior is ready.",
-                    contentLeft, panelTop + 114, 0xFFB7C7DF, false);
+                    contentLeft, panelTop + 114, 0xFF9EB49F, false);
         } else if (selected == Category.MODS) {
-            graphics.drawString(font, "INSTALLED MOD LIBRARY", contentLeft, panelTop + 88, 0xFFFFFFFF, false);
-            graphics.drawString(font, "Detected from your current Fabric installation.", contentLeft, panelTop + 108, 0xFFB7C7DF, false);
+            graphics.drawString(font, "INSTALLED MOD LIBRARY", contentLeft, panelTop + 88, 0xFFF1FFF1, false);
+            graphics.drawString(font, "Detected from your current Fabric installation.", contentLeft, panelTop + 108, 0xFF9EB49F, false);
             var mods = FabricLoader.getInstance().getAllMods();
             int rowY = panelTop + 134;
             int maxRows = Math.max(1, (panelHeight - 190) / 22);
@@ -255,33 +255,33 @@ public final class ClientMenuScreen extends Screen {
                 if (shown >= maxRows) break;
                 String modName = mod.getMetadata().getName();
                 String version = mod.getMetadata().getVersion().getFriendlyString();
-                graphics.fill(contentLeft, rowY - 3, right - 18, rowY + 16, 0xFF1B2940);
-                graphics.drawString(font, modName, contentLeft + 8, rowY, 0xFFEAF4FF, false);
-                graphics.drawString(font, version, right - 110, rowY, 0xFF8FA9CB, false);
+                graphics.fill(contentLeft, rowY - 3, right - 18, rowY + 16, 0xFF101D12);
+                graphics.drawString(font, modName, contentLeft + 8, rowY, 0xFFE8F5E9, false);
+                graphics.drawString(font, version, right - 110, rowY, 0xFF7FAF82, false);
                 rowY += 22;
                 shown++;
             }
             graphics.drawString(font, "Showing " + shown + " of " + mods.size() + " installed mods",
-                    contentLeft, panelTop + panelHeight - 64, 0xFF4DCBFF, false);
+                    contentLeft, panelTop + panelHeight - 64, 0xFF39FF14, false);
         } else if (selected == Category.HACKS) {
-            graphics.drawString(font, "PRACTICE / DEBUG TOOLS", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
+            graphics.drawString(font, "PRACTICE / DEBUG TOOLS", contentLeft, panelTop + 90, 0xFFF1FFF1, false);
             graphics.drawString(font, "LightClient focuses on client-side HUD, accessibility and testing tools.",
-                    contentLeft, panelTop + 114, 0xFFB7C7DF, false);
+                    contentLeft, panelTop + 114, 0xFF9EB49F, false);
             graphics.drawString(font, "No combat automation or anti-cheat bypass is bundled here.",
-                    contentLeft, panelTop + 136, 0xFFEAF4FF, false);
+                    contentLeft, panelTop + 136, 0xFFE8F5E9, false);
             graphics.drawString(font, "Use Minecraft's built-in debug overlays for private-world testing.",
-                    contentLeft, panelTop + 158, 0xFFEAF4FF, false);
+                    contentLeft, panelTop + 158, 0xFFE8F5E9, false);
         } else if (selected == Category.UTILITY) {
-            graphics.drawString(font, "CLIENT UTILITIES", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
+            graphics.drawString(font, "CLIENT UTILITIES", contentLeft, panelTop + 90, 0xFFF1FFF1, false);
             graphics.drawString(font, "Save and restore your HUD module selections below.",
-                    contentLeft, panelTop + 114, 0xFFB7C7DF, false);
-            graphics.drawString(font, utilityNotice, contentLeft, panelTop + 140, 0xFFEAF4FF, false);
+                    contentLeft, panelTop + 114, 0xFF9EB49F, false);
+            graphics.drawString(font, utilityNotice, contentLeft, panelTop + 140, 0xFFE8F5E9, false);
         } else if (selected == Category.ABOUT) {
-            graphics.drawString(font, "LIGHTCLIENT", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
+            graphics.drawString(font, "LIGHTCLIENT", contentLeft, panelTop + 90, 0xFFF1FFF1, false);
             graphics.drawString(font, "An independent client-side mod for Minecraft Java 1.21.11.",
-                    contentLeft, panelTop + 114, 0xFFB7C7DF, false);
+                    contentLeft, panelTop + 114, 0xFF9EB49F, false);
             graphics.drawString(font, "Open the hub with the configurable menu key while in a world.",
-                    contentLeft, panelTop + 136, 0xFFEAF4FF, false);
+                    contentLeft, panelTop + 136, 0xFFE8F5E9, false);
         }
         super.render(graphics, mouseX, mouseY, delta);
     }

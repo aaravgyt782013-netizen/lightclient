@@ -38,12 +38,12 @@ public final class FastClientInspired implements ClientModInitializer {
         });
 
         ScreenEvents.AFTER_INIT.register((screenClient, screen, scaledWidth, scaledHeight) -> {
-            if (screen instanceof TitleScreen || screen instanceof PauseScreen) {
-                int x = Math.max(8, scaledWidth - 148);
-                String label = screen instanceof TitleScreen ? "✦  LIGHTCLIENT HUB" : "✦  CLIENT SETTINGS";
-                Screens.getButtons(screen).add(Button.builder(Component.literal(label),
-                        button -> screenClient.setScreen(new ClientMenuScreen(screen)))
-                        .bounds(x, 10, 140, 26).build());
+            // Replace the vanilla entry screens with LightClient's own shell. The shell
+            // is not a TitleScreen/PauseScreen, so this cannot recursively reopen itself.
+            if (screen instanceof TitleScreen) {
+                screenClient.setScreen(new LightClientShellScreen(screen, true));
+            } else if (screen instanceof PauseScreen) {
+                screenClient.setScreen(new LightClientShellScreen(screen, false));
             }
         });
         HudRenderCallback.EVENT.register((graphics, tickCounter) -> {
@@ -130,10 +130,10 @@ public final class FastClientInspired implements ClientModInitializer {
                 boolean transparent = ClientConfig.isEnabled("Transparent HUD");
                 int opacity = transparent ? ClientConfig.hudOpacity() : 100;
                 int alpha = (int) (255 * opacity / 100.0);
-                int bg = (alpha << 24) | 0x0D1422;
+                int bg = (alpha << 24) | 0x050B06;
                 if (background) graphics.fill(x - 3, y - 3, x + textWidth + 7, y + 11, bg);
-                if (ClientConfig.isEnabled("Accent Bar")) graphics.fill(x - 3, y - 3, x - 1, y + 11, 0xFF4DCBFF);
-                graphics.drawString(client.font, line.text(), x + 2, y, 0xFFEAF4FF, false);
+                if (ClientConfig.isEnabled("Accent Bar")) graphics.fill(x - 3, y - 3, x - 1, y + 11, 0xFF39FF14);
+                graphics.drawString(client.font, line.text(), x + 2, y, 0xFFE8F5E9, false);
             }
         });
     }
