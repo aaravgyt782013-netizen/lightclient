@@ -5,6 +5,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public final class ClientMenuScreen extends Screen {
                     "Held Item Durability", "Armor Durability", "Biome Display", "Dimension Display", "Speed Display", "Compass HUD"),
             Category.PERFORMANCE, List.of("Compact HUD", "Hide HUD in F1"),
             Category.VISUALS, List.of("Transparent HUD", "HUD Background", "Accent Bar"),
-            Category.MODS, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage", "Keystrokes HUD", "Health Display", "Facing Direction", "World Time", "Held Item Durability", "Armor Durability", "Biome Display", "Dimension Display", "Speed Display", "Compass HUD"),
+            Category.MODS, List.of(),
             Category.HACKS, List.of(),
             Category.UTILITY, List.of(),
             Category.HOME, List.of(),
@@ -74,7 +75,7 @@ public final class ClientMenuScreen extends Screen {
             navY += 31;
         }
 
-        if (selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS || selected == Category.MODS) {
+        if (selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS) {
             search = new EditBox(font, contentLeft, panelTop + 72,
                     panelLeft + panelWidth - 20 - contentLeft, 24, Component.literal("Search modules"));
             search.setHint(Component.literal("Search HUD modules..."));
@@ -117,7 +118,7 @@ public final class ClientMenuScreen extends Screen {
         }
 
         if (selected == Category.HOME) {
-            int quickY = panelTop + 290;
+            int quickY = panelTop + panelHeight - 120;
             int quickWidth = Math.max(90, (panelLeft + panelWidth - contentLeft - 26) / 2);
             addRenderableWidget(Button.builder(Component.literal("HUD Modules"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.HUD)))
@@ -158,7 +159,7 @@ public final class ClientMenuScreen extends Screen {
         for (Button button : moduleButtons) removeWidget(button);
         moduleButtons.clear();
         int availableWidth = panelLeft + panelWidth - 20 - contentLeft;
-        if (!(selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS || selected == Category.MODS)) return;
+        if (!(selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS)) return;
 
         int row = 0;
         for (String module : MODULES.getOrDefault(selected, List.of())) {
@@ -224,7 +225,7 @@ public final class ClientMenuScreen extends Screen {
             graphics.drawString(font, "QUICK ACCESS", contentLeft + 12, panelTop + 222, 0xFF4DCBFF, false);
             graphics.drawString(font, "Manage overlays in HUD Modules, then drag them in HUD Editor.",
                     contentLeft + 12, panelTop + 243, 0xFFEAF4FF, false);
-        } else if (selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS || selected == Category.MODS) {
+        } else if (selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS) {
             graphics.drawString(font, "Toggle a module to enable or disable it. Choices are saved automatically.",
                     contentLeft, panelTop + 58, 0xFFB7C7DF, false);
             if (moduleButtons.isEmpty()) {
@@ -243,6 +244,25 @@ public final class ClientMenuScreen extends Screen {
             graphics.drawString(font, "VISUAL MODULES", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
             graphics.drawString(font, "Visual enhancements will be added when their behavior is ready.",
                     contentLeft, panelTop + 114, 0xFFB7C7DF, false);
+        } else if (selected == Category.MODS) {
+            graphics.drawString(font, "INSTALLED MOD LIBRARY", contentLeft, panelTop + 88, 0xFFFFFFFF, false);
+            graphics.drawString(font, "Detected from your current Fabric installation.", contentLeft, panelTop + 108, 0xFFB7C7DF, false);
+            var mods = FabricLoader.getInstance().getAllMods();
+            int rowY = panelTop + 134;
+            int maxRows = Math.max(1, (panelHeight - 190) / 22);
+            int shown = 0;
+            for (var mod : mods) {
+                if (shown >= maxRows) break;
+                String modName = mod.getMetadata().getName();
+                String version = mod.getMetadata().getVersion().getFriendlyString();
+                graphics.fill(contentLeft, rowY - 3, right - 18, rowY + 16, 0xFF1B2940);
+                graphics.drawString(font, modName, contentLeft + 8, rowY, 0xFFEAF4FF, false);
+                graphics.drawString(font, version, right - 110, rowY, 0xFF8FA9CB, false);
+                rowY += 22;
+                shown++;
+            }
+            graphics.drawString(font, "Showing " + shown + " of " + mods.size() + " installed mods",
+                    contentLeft, panelTop + panelHeight - 64, 0xFF4DCBFF, false);
         } else if (selected == Category.HACKS) {
             graphics.drawString(font, "PRACTICE / DEBUG TOOLS", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
             graphics.drawString(font, "LightClient focuses on client-side HUD, accessibility and testing tools.",
