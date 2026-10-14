@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -40,7 +41,7 @@ public final class FastClientInspired implements ClientModInitializer {
             if (screen instanceof TitleScreen || screen instanceof PauseScreen) {
                 int x = Math.max(8, scaledWidth - 138);
                 String label = screen instanceof TitleScreen ? "✦ LightClient" : "✦ LightClient Settings";
-                screen.addRenderableWidget(Button.builder(Component.literal(label),
+                Screens.getWidgets(screen).add(Button.builder(Component.literal(label),
                         button -> screenClient.setScreen(new ClientMenuScreen(screen)))
                         .bounds(x, 10, 128, 24).build());
             }

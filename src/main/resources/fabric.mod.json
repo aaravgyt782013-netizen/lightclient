@@ -4,7 +4,7 @@
   "version": "${version}",
   "name": "LightClient",
   "description": "LightClient is an original configurable client-side enhancement mod for Minecraft Java Edition.",
-  "authors": ["FastClient-Inspired contributors"],
+  "authors": ["LightClient contributors"],
   "license": "MIT",
   "environment": "client",
   "entrypoints": {

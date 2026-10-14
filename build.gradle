@@ -10,7 +10,7 @@ base { archivesName = project.archives_base_name }
 loom {
     splitEnvironmentSourceSets()
     mods {
-        "fastclientinspired" {
+        "lightclient" {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
         }
