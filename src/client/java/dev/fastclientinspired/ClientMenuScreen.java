@@ -30,6 +30,7 @@ public final class ClientMenuScreen extends Screen {
     private EditBox search;
     private final List<Button> moduleButtons = new ArrayList<>();
     private String searchText = "";
+    private String utilityNotice = "Profiles save your current HUD module toggles.";
     private int panelLeft;
     private int panelTop;
     private int panelWidth;
@@ -74,6 +75,26 @@ public final class ClientMenuScreen extends Screen {
             });
             addRenderableWidget(search);
             rebuildModuleButtons();
+        }
+
+        if (selected == Category.UTILITY) {
+            int buttonWidth = Math.min(220, panelWidth - 190);
+            addRenderableWidget(Button.builder(Component.literal("Save Current Profile"), b -> {
+                boolean saved = ClientConfig.saveProfile();
+                utilityNotice = saved ? "Profile saved to the LightClient config folder."
+                        : "Could not save profile. Check the game log.";
+            }).bounds(contentLeft, panelTop + 154, buttonWidth, 28).build());
+            addRenderableWidget(Button.builder(Component.literal("Load Saved Profile"), b -> {
+                boolean loaded = ClientConfig.loadProfile();
+                utilityNotice = loaded ? "Saved module settings loaded."
+                        : "No saved profile found yet. Save one first.";
+                init();
+            }).bounds(contentLeft, panelTop + 190, buttonWidth, 28).build());
+            addRenderableWidget(Button.builder(Component.literal("Reset Module Toggles"), b -> {
+                ClientConfig.resetModules();
+                utilityNotice = "Module toggles restored to their defaults.";
+                init();
+            }).bounds(contentLeft, panelTop + 226, buttonWidth, 28).build());
         }
 
         int footerY = panelTop + panelHeight - 42;
@@ -175,10 +196,9 @@ public final class ClientMenuScreen extends Screen {
                     contentLeft, panelTop + 114, 0xFFB7C7DF, false);
         } else if (selected == Category.UTILITY) {
             graphics.drawString(font, "CLIENT UTILITIES", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
-            graphics.drawString(font, "Open Options > Controls to rebind the LightClient menu key.",
+            graphics.drawString(font, "Save and restore your HUD module selections below.",
                     contentLeft, panelTop + 114, 0xFFB7C7DF, false);
-            graphics.drawString(font, "Default menu key: Right Shift.", contentLeft, panelTop + 136,
-                    0xFFEAF4FF, false);
+            graphics.drawString(font, utilityNotice, contentLeft, panelTop + 140, 0xFFEAF4FF, false);
         } else if (selected == Category.ABOUT) {
             graphics.drawString(font, "LIGHTCLIENT", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
             graphics.drawString(font, "An independent client-side mod for Minecraft Java 1.21.11.",

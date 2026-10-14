@@ -14,6 +14,7 @@ public final class ClientConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("fastclient-inspired.json");
     private static final Path HUD_FILE = FabricLoader.getInstance().getConfigDir().resolve("fastclient-inspired-hud.json");
+    private static final Path PROFILE_FILE = FabricLoader.getInstance().getConfigDir().resolve("lightclient-profile.json");
     private static final Map<String, Boolean> DEFAULTS = new LinkedHashMap<>();
     private static Map<String, Boolean> enabled = new LinkedHashMap<>();
     private static int hudX = 8;
@@ -50,6 +51,41 @@ public final class ClientConfig {
         Map<String, Boolean> result = new LinkedHashMap<>(DEFAULTS);
         result.putAll(enabled);
         return result;
+    }
+
+    public static synchronized void resetModules() {
+        enabled = new LinkedHashMap<>(DEFAULTS);
+        save();
+    }
+
+    public static synchronized boolean saveProfile() {
+        try {
+            Files.createDirectories(PROFILE_FILE.getParent());
+            Files.writeString(PROFILE_FILE, GSON.toJson(modules()));
+            return true;
+        } catch (IOException exception) {
+            System.err.println("[LightClient] Could not save profile: " + exception.getMessage());
+            return false;
+        }
+    }
+
+    public static synchronized boolean loadProfile() {
+        if (!Files.exists(PROFILE_FILE)) return false;
+        try {
+            Map<?, ?> saved = GSON.fromJson(Files.readString(PROFILE_FILE), Map.class);
+            if (saved == null) return false;
+            Map<String, Boolean> restored = new LinkedHashMap<>(DEFAULTS);
+            for (Map.Entry<?, ?> entry : saved.entrySet()) {
+                if (entry.getKey() instanceof String key && entry.getValue() instanceof Boolean value
+                        && DEFAULTS.containsKey(key)) restored.put(key, value);
+            }
+            enabled = restored;
+            save();
+            return true;
+        } catch (Exception exception) {
+            System.err.println("[LightClient] Could not load profile: " + exception.getMessage());
+            return false;
+        }
     }
 
     public static synchronized int hudX() { return hudX; }
