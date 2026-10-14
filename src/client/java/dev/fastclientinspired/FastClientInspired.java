@@ -5,6 +5,11 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -32,6 +37,15 @@ public final class FastClientInspired implements ClientModInitializer {
             }
         });
 
+        ScreenEvents.AFTER_INIT.register((screenClient, screen, scaledWidth, scaledHeight) -> {
+            if (screen instanceof TitleScreen || screen instanceof PauseScreen) {
+                int x = Math.max(8, scaledWidth - 148);
+                String label = screen instanceof TitleScreen ? "✦  LIGHTCLIENT HUB" : "✦  CLIENT SETTINGS";
+                Screens.getButtons(screen).add(Button.builder(Component.literal(label),
+                        button -> screenClient.setScreen(new ClientMenuScreen(screen)))
+                        .bounds(x, 10, 140, 26).build());
+            }
+        });
         HudRenderCallback.EVENT.register((graphics, tickCounter) -> {
             Minecraft client = Minecraft.getInstance();
             if (client.player == null) return;
