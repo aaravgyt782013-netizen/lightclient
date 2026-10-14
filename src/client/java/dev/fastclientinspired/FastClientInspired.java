@@ -66,6 +66,10 @@ public final class FastClientInspired implements ClientModInitializer {
                 lines.add(new HudLine("Memory Usage", "RAM  " + ((runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024))
                         + " / " + (runtime.maxMemory() / (1024 * 1024)) + " MB"));
             }
+            if (ClientConfig.isEnabled("Hunger Display")) lines.add(new HudLine("Hunger Display",
+                    "HUNGER  " + client.player.getFoodData().getFoodLevel() + " / 20"));
+            if (ClientConfig.isEnabled("XP Display")) lines.add(new HudLine("XP Display",
+                    "XP  LVL " + client.player.experienceLevel + "  •  " + Math.round(client.player.experienceProgress * 100) + "%"));
             if (ClientConfig.isEnabled("Health Display")) lines.add(new HudLine("Health Display",
                     String.format(Locale.ROOT, "HEALTH  %.1f / %.1f", client.player.getHealth(), client.player.getMaxHealth())));
             if (ClientConfig.isEnabled("Facing Direction")) lines.add(new HudLine("Facing Direction",

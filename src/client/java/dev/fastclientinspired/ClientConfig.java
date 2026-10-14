@@ -30,6 +30,8 @@ public final class ClientConfig {
         DEFAULTS.put("Memory Usage", false);
         DEFAULTS.put("Keystrokes HUD", false);
         DEFAULTS.put("Health Display", false);
+        DEFAULTS.put("Hunger Display", false);
+        DEFAULTS.put("XP Display", false);
         DEFAULTS.put("Facing Direction", false);
         DEFAULTS.put("World Time", false);
         DEFAULTS.put("Held Item Durability", false);

@@ -17,7 +17,7 @@ public final class ClientMenuScreen extends Screen {
 
     private static final Map<Category, List<String>> MODULES = Map.of(
             Category.HUD, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage",
-                    "Keystrokes HUD", "Health Display", "Facing Direction", "World Time",
+                    "Keystrokes HUD", "Health Display", "Hunger Display", "XP Display", "Facing Direction", "World Time",
                     "Held Item Durability", "Armor Durability", "Biome Display", "Dimension Display", "Speed Display", "Compass HUD"),
             Category.PERFORMANCE, List.of("Compact HUD", "Hide HUD in F1"),
             Category.VISUALS, List.of("Transparent HUD", "HUD Background", "Accent Bar"),
