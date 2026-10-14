@@ -219,13 +219,13 @@ public final class ClientMenuScreen extends Screen {
                     contentLeft, panelTop + 108, 0xFF9EB49F, false);
             graphics.fill(contentLeft, panelTop + 136, right - 18, panelTop + 198, 0xFF101D12);
             graphics.drawString(font, "HUD SYSTEM", contentLeft + 12, panelTop + 148, 0xFF39FF14, false);
-            graphics.drawString(font, "14 configurable HUD modules  •  " + enabledModuleCount() + " enabled",
+            graphics.drawString(font, MODULES.get(Category.HUD).size() + " configurable HUD modules  •  " + enabledModuleCount() + " enabled",
                     contentLeft + 12, panelTop + 169, 0xFFE8F5E9, false);
             graphics.fill(contentLeft, panelTop + 210, right - 18, panelTop + 272, 0xFF101D12);
             graphics.drawString(font, "QUICK ACCESS", contentLeft + 12, panelTop + 222, 0xFF39FF14, false);
             graphics.drawString(font, "Manage overlays in HUD Modules, then drag them in HUD Editor.",
                     contentLeft + 12, panelTop + 243, 0xFFE8F5E9, false);
-        } else if (selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS) {
+        } else if (selected == Category.HUD || selected == Category.VISUALS) {
             graphics.drawString(font, "Toggle a module to enable or disable it. Choices are saved automatically.",
                     contentLeft, panelTop + 58, 0xFF9EB49F, false);
             if (moduleButtons.isEmpty()) {
