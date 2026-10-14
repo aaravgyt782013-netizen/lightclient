@@ -13,8 +13,11 @@ import java.util.Map;
 public final class ClientConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("fastclient-inspired.json");
+    private static final Path HUD_FILE = FabricLoader.getInstance().getConfigDir().resolve("fastclient-inspired-hud.json");
     private static final Map<String, Boolean> DEFAULTS = new LinkedHashMap<>();
     private static Map<String, Boolean> enabled = new LinkedHashMap<>();
+    private static int hudX = 8;
+    private static int hudY = 8;
 
     static {
         DEFAULTS.put("FPS Counter", true);
@@ -25,6 +28,7 @@ public final class ClientConfig {
         DEFAULTS.put("Health Display", false);
         DEFAULTS.put("Facing Direction", false);
         load();
+        loadHudPosition();
     }
 
     private ClientConfig() {}
@@ -45,6 +49,34 @@ public final class ClientConfig {
         return result;
     }
 
+    public static synchronized int hudX() { return hudX; }
+    public static synchronized int hudY() { return hudY; }
+
+    public static synchronized void setHudPosition(int x, int y) {
+        hudX = Math.max(0, x);
+        hudY = Math.max(0, y);
+        try {
+            Files.createDirectories(HUD_FILE.getParent());
+            Files.writeString(HUD_FILE, GSON.toJson(new int[]{hudX, hudY}));
+        } catch (IOException exception) {
+            System.err.println("[LightClient] Could not save HUD position: " + exception.getMessage());
+        }
+    }
+
+    private static synchronized void loadHudPosition() {
+        try {
+            if (Files.exists(HUD_FILE)) {
+                int[] position = GSON.fromJson(Files.readString(HUD_FILE), int[].class);
+                if (position != null && position.length >= 2) {
+                    hudX = Math.max(0, position[0]);
+                    hudY = Math.max(0, position[1]);
+                }
+            }
+        } catch (Exception exception) {
+            System.err.println("[LightClient] Could not load HUD position: " + exception.getMessage());
+        }
+    }
+
     private static synchronized void load() {
         enabled = new LinkedHashMap<>(DEFAULTS);
         try {
@@ -53,14 +85,12 @@ public final class ClientConfig {
                 if (saved != null) {
                     for (Map.Entry<?, ?> entry : saved.entrySet()) {
                         if (entry.getKey() instanceof String key && entry.getValue() instanceof Boolean value
-                                && DEFAULTS.containsKey(key)) {
-                            enabled.put(key, value);
-                        }
+                                && DEFAULTS.containsKey(key)) enabled.put(key, value);
                     }
                 }
             }
         } catch (Exception exception) {
-            System.err.println("[FastClient-Inspired] Could not load config: " + exception.getMessage());
+            System.err.println("[LightClient] Could not load config: " + exception.getMessage());
         }
         save();
     }
@@ -70,7 +100,7 @@ public final class ClientConfig {
             Files.createDirectories(FILE.getParent());
             Files.writeString(FILE, GSON.toJson(enabled));
         } catch (IOException exception) {
-            System.err.println("[FastClient-Inspired] Could not save config: " + exception.getMessage());
+            System.err.println("[LightClient] Could not save config: " + exception.getMessage());
         }
     }
 }

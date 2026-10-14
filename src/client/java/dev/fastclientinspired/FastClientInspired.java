@@ -20,11 +20,8 @@ public final class FastClientInspired implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         openMenu = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.fastclientinspired.open_menu",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
-                KeyMapping.Category.MISC
-        ));
+                "key.fastclientinspired.open_menu", InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_RIGHT_SHIFT, KeyMapping.Category.MISC));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openMenu.consumeClick()) {
@@ -48,9 +45,8 @@ public final class FastClientInspired implements ClientModInitializer {
             }
             if (ClientConfig.isEnabled("Memory Usage")) {
                 Runtime runtime = Runtime.getRuntime();
-                long used = (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);
-                long max = runtime.maxMemory() / (1024 * 1024);
-                lines.add("RAM  " + used + " / " + max + " MB");
+                lines.add("RAM  " + ((runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024))
+                        + " / " + (runtime.maxMemory() / (1024 * 1024)) + " MB");
             }
             if (ClientConfig.isEnabled("Health Display")) {
                 lines.add(String.format(java.util.Locale.ROOT, "HEALTH  %.1f / %.1f",
@@ -65,19 +61,19 @@ public final class FastClientInspired implements ClientModInitializer {
                         + "  JUMP " + key(client.options.keyJump));
             }
 
-            int y = 8;
+            int x = Math.min(ClientConfig.hudX(), Math.max(0, graphics.guiWidth() - 180));
+            int y = Math.min(ClientConfig.hudY(), Math.max(0, graphics.guiHeight() - lines.size() * 14 - 4));
             for (String line : lines) {
-                graphics.fill(6, y - 2, 18 + client.font.width(line), y + 11, 0x990D1422);
-                graphics.fill(6, y - 2, 8, y + 11, 0xFF4DCBFF);
-                graphics.drawString(client.font, line, 11, y, 0xFFEAF4FF, false);
+                int right = x + client.font.width(line) + 12;
+                graphics.fill(x - 2, y - 2, right, y + 11, 0x990D1422);
+                graphics.fill(x - 2, y - 2, x, y + 11, 0xFF4DCBFF);
+                graphics.drawString(client.font, line, x + 3, y, 0xFFEAF4FF, false);
                 y += 14;
             }
         });
     }
 
-    private static String key(KeyMapping mapping) {
-        return mapping.isDown() ? "■" : "□";
-    }
+    private static String key(KeyMapping mapping) { return mapping.isDown() ? "■" : "□"; }
 
     public static void showNotice(String message) {
         Minecraft client = Minecraft.getInstance();

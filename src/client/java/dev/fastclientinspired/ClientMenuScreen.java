@@ -55,18 +55,20 @@ public final class ClientMenuScreen extends Screen {
         }
 
         search = new EditBox(font, panelLeft + 14, panelTop + 98, 532, 24, Component.literal("Search modules"));
-        search.setHint(Component.literal("Search active HUD modules..."));
+        search.setHint(Component.literal("Search HUD modules..."));
         search.setValue(searchText);
         search.setResponder(value -> {
             searchText = value;
             rebuildModuleButtons();
         });
         addRenderableWidget(search);
-
         rebuildModuleButtons();
 
+        addRenderableWidget(Button.builder(Component.literal("Open HUD Editor"), button ->
+                minecraft.setScreen(new HudEditorScreen(this)))
+                .bounds(panelLeft + 14, panelTop + 286, 260, 26).build());
         addRenderableWidget(Button.builder(Component.literal("Done"), button -> onClose())
-                .bounds(panelLeft + 14, panelTop + 320, 532, 26).build());
+                .bounds(panelLeft + 284, panelTop + 286, 262, 26).build());
     }
 
     private void rebuildModuleButtons() {
@@ -75,7 +77,7 @@ public final class ClientMenuScreen extends Screen {
 
         if (selected == Category.PERFORMANCE) {
             addInfoButton("Performance settings", "Use Minecraft Video Settings for render distance, simulation distance, clouds, particles and graphics quality.");
-            addInfoButton("Compatibility first", "This client does not force unsafe JVM flags or silently change worlds/server settings.");
+            addInfoButton("Compatibility first", "No unsafe JVM flags or automatic world/server changes.");
             return;
         }
         if (selected == Category.ABOUT) {
@@ -99,14 +101,12 @@ public final class ClientMenuScreen extends Screen {
             addRenderableWidget(button);
             row++;
         }
-        if (moduleButtons.isEmpty()) {
-            addInfoButton("No matching modules", "Try another search or choose the HUD tab.");
-        }
+        if (moduleButtons.isEmpty()) addInfoButton("No matching modules", "Try another search or choose the HUD tab.");
     }
 
     private void addInfoButton(String title, String detail) {
-        Button button = Button.builder(Component.literal(title), b -> {}).bounds(
-                panelLeft + 14, panelTop + 140 + moduleButtons.size() * 62, 532, 52).build();
+        Button button = Button.builder(Component.literal(title + "  ·  " + detail), b -> {})
+                .bounds(panelLeft + 14, panelTop + 140 + moduleButtons.size() * 62, 532, 52).build();
         moduleButtons.add(button);
         addRenderableWidget(button);
     }
@@ -128,12 +128,6 @@ public final class ClientMenuScreen extends Screen {
         graphics.drawString(font, selected == Category.HUD ? "HUD MODULES" : selected.name(),
                 panelLeft + 16, panelTop + 51, 0xFF4DCBFF, false);
         super.render(graphics, mouseX, mouseY, delta);
-        if (selected == Category.PERFORMANCE) {
-            graphics.drawString(font, "Render distance and graphics options remain controlled by Minecraft.", panelLeft + 24,
-                    panelTop + 210, 0xFFCBD7E8, false);
-        } else if (selected == Category.ABOUT) {
-            graphics.drawString(font, "Build tested by GitHub Actions.", panelLeft + 24, panelTop + 210, 0xFFCBD7E8, false);
-        }
     }
 
     @Override
@@ -142,7 +136,5 @@ public final class ClientMenuScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
+    public boolean isPauseScreen() { return false; }
 }
