@@ -41,7 +41,7 @@ public final class FastClientInspired implements ClientModInitializer {
             if (screen instanceof TitleScreen || screen instanceof PauseScreen) {
                 int x = Math.max(8, scaledWidth - 138);
                 String label = screen instanceof TitleScreen ? "✦ LightClient" : "✦ LightClient Settings";
-                Screens.getWidgets(screen).add(Button.builder(Component.literal(label),
+                Screens.getButtons(screen).add(Button.builder(Component.literal(label),
                         button -> screenClient.setScreen(new ClientMenuScreen(screen)))
                         .bounds(x, 10, 128, 24).build());
             }
