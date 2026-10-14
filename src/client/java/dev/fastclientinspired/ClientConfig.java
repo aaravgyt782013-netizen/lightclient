@@ -31,6 +31,8 @@ public final class ClientConfig {
         DEFAULTS.put("World Time", false);
         DEFAULTS.put("Held Item Durability", false);
         DEFAULTS.put("Armor Durability", false);
+        DEFAULTS.put("Biome Display", false);
+        DEFAULTS.put("Dimension Display", false);
         load();
         loadHudPosition();
     }

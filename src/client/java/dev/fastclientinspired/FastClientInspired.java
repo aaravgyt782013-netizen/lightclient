@@ -58,9 +58,19 @@ public final class FastClientInspired implements ClientModInitializer {
             if (ClientConfig.isEnabled("Facing Direction")) {
                 lines.add("FACING  " + client.player.getDirection().getName().toUpperCase(Locale.ROOT));
             }
+            if (ClientConfig.isEnabled("Biome Display") && client.level != null) {
+                String biome = client.level.getBiome(client.player.blockPosition()).unwrapKey()
+                        .map(key -> key.location().getPath().replace('_', ' ')).orElse("unknown");
+                lines.add("BIOME  " + biome.toUpperCase(Locale.ROOT));
+            }
+            if (ClientConfig.isEnabled("Dimension Display") && client.level != null) {
+                String dimension = client.level.dimension().location().getPath()
+                        .replace('_', ' ').toUpperCase(Locale.ROOT);
+                lines.add("DIMENSION  " + dimension);
+            }
             if (ClientConfig.isEnabled("Keystrokes HUD")) {
-                lines.add("KEYS  " + key(client.options.keyUp) + key(client.options.keyLeft)
-                        + key(client.options.keyDown) + key(client.options.keyRight)
+                lines.add("KEYS  W " + key(client.options.keyUp) + "  A " + key(client.options.keyLeft)
+                        + "  S " + key(client.options.keyDown) + "  D " + key(client.options.keyRight)
                         + "  JUMP " + key(client.options.keyJump));
             }
             if (ClientConfig.isEnabled("World Time") && client.level != null) {
