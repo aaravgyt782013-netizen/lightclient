@@ -60,12 +60,15 @@ public final class FastClientInspired implements ClientModInitializer {
             }
             if (ClientConfig.isEnabled("Biome Display") && client.level != null) {
                 String biome = client.level.getBiome(client.player.blockPosition()).unwrapKey()
-                        .map(key -> key.location().getPath().replace('_', ' ')).orElse("unknown");
+                        .map(Object::toString).orElse("unknown")
+                        .replace("ResourceKey[", "").replace("]", "")
+                        .replace("minecraft:", "").replace(':', ' ').replace('_', ' ');
                 lines.add("BIOME  " + biome.toUpperCase(Locale.ROOT));
             }
             if (ClientConfig.isEnabled("Dimension Display") && client.level != null) {
-                String dimension = client.level.dimension().location().getPath()
-                        .replace('_', ' ').toUpperCase(Locale.ROOT);
+                String dimension = client.level.dimension().toString()
+                        .replace("ResourceKey[", "").replace("]", "")
+                        .replace("minecraft:", "").replace(':', ' ').replace('_', ' ').toUpperCase(Locale.ROOT);
                 lines.add("DIMENSION  " + dimension);
             }
             if (ClientConfig.isEnabled("Speed Display")) {
