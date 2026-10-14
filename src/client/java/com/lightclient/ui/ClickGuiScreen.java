@@ -17,16 +17,16 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public final class ClickGuiScreen extends Screen {
-    private static final int BLUE = 0xFF48A0FF;
-    private static final int CYAN = 0xFF63D7FF;
-    private static final int PANEL = 0xFF0C1422;
-    private static final int SIDEBAR = 0xFF09101B;
-    private static final int ROW = 0xFF141F2F;
-    private static final int ROW_HOVER = 0xFF1A2B40;
+    private static final int BLUE = 0xFF5AA9FF;
+    private static final int CYAN = 0xFF79DFFF;
+    private static final int PANEL = 0xFF0B1220;
+    private static final int SIDEBAR = 0xFF080E18;
+    private static final int ROW = 0xFF101A29;
+    private static final int ROW_HOVER = 0xFF17283D;
     private static final int MUTED = 0xFF9AADC5;
-    private static final int PANEL_WIDTH = 650;
-    private static final int PANEL_HEIGHT = 410;
-    private static final int ROW_HEIGHT = 43;
+    private static final int PANEL_WIDTH = 680;
+    private static final int PANEL_HEIGHT = 430;
+    private static final int ROW_HEIGHT = 45;
     private static final int ROW_GAP = 5;
 
     private final Screen parent;
@@ -186,8 +186,8 @@ public final class ClickGuiScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mx, int my, float tick) {
-        g.fill(0, 0, width, height, 0xB8000309);
-        g.fill(panelLeft, panelTop, panelLeft + panelWidth, panelTop + panelHeight, PANEL);
+        g.fill(0, 0, width, height, 0xD0060A12);
+        g.fill(panelLeft - 2, panelTop - 2, panelLeft + panelWidth + 2, panelTop + panelHeight + 2, 0x663B76B8);\n        g.fill(panelLeft, panelTop, panelLeft + panelWidth, panelTop + panelHeight, PANEL);
         g.fill(panelLeft, panelTop, panelLeft + 3, panelTop + panelHeight, BLUE);
         g.fill(panelLeft + 3, panelTop + 3, panelLeft + sidebarWidth, panelTop + panelHeight - 3, SIDEBAR);
         g.fill(panelLeft + sidebarWidth, panelTop + 3, panelLeft + sidebarWidth + 1, panelTop + panelHeight - 3, 0xFF26364A);
@@ -209,10 +209,10 @@ public final class ClickGuiScreen extends Screen {
             int y = rowY + (i - scrollOffset) * (ROW_HEIGHT + ROW_GAP);
             boolean hovered = mx >= listLeft && mx < listLeft + listWidth && my >= y && my < y + ROW_HEIGHT;
             boolean enabled = m.get().getAsBoolean();
-            g.fill(listLeft, y, listLeft + listWidth, y + ROW_HEIGHT, hovered ? ROW_HOVER : ROW);
+            g.fill(listLeft, y, listLeft + listWidth, y + ROW_HEIGHT, hovered ? ROW_HOVER : ROW);\n            g.fill(listLeft + 3, y + 3, listLeft + listWidth - 3, y + 4, hovered ? 0xFF2A4664 : 0xFF1B2A3C);
             g.fill(listLeft, y, listLeft + 2, y + ROW_HEIGHT, m.implemented() && enabled ? BLUE : 0xFF29384B);
             g.drawString(font, m.name(), listLeft + 10, y + 7, m.implemented() ? 0xFFF1F6FF : MUTED, false);
-            g.drawString(font, m.description(), listLeft + 10, y + 23, 0xFF8FA3BD, false);
+            g.drawString(font, m.description(), listLeft + 10, y + 25, 0xFF91A5BF, false);
             int toggleW = 40, toggleH = 18;
             int tx = listLeft + listWidth - toggleW - 9;
             int ty = y + (ROW_HEIGHT - toggleH) / 2;
