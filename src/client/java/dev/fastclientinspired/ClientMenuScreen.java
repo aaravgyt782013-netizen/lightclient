@@ -38,29 +38,37 @@ public final class ClientMenuScreen extends Screen {
     private int contentLeft;
 
     public ClientMenuScreen(Screen parent) {
+        this(parent, Category.HOME);
+    }
+
+    private ClientMenuScreen(Screen parent, Category initialCategory) {
         super(Component.literal("LightClient"));
         this.parent = parent;
+        this.selected = initialCategory;
     }
 
     @Override
     protected void init() {
+        // Explicitly release mouse capture so the pointer remains visible in the menu.
+        if (minecraft != null) minecraft.mouseHandler.releaseMouse();
         clearWidgets();
         moduleButtons.clear();
-        panelWidth = Math.min(760, Math.max(500, width - 24));
-        panelHeight = Math.min(460, Math.max(320, height - 24));
+        panelWidth = Math.min(760, Math.max(320, width - 16));
+        panelHeight = Math.min(460, Math.max(260, height - 16));
         panelLeft = (width - panelWidth) / 2;
         panelTop = (height - panelHeight) / 2;
-        contentLeft = panelLeft + 156;
+        int navWidth = Math.min(144, Math.max(104, panelWidth / 3));
+        contentLeft = panelLeft + navWidth + 12;
 
         int navY = panelTop + 78;
         for (Category category : Category.values()) {
             Category target = category;
             addRenderableWidget(Button.builder(Component.literal((selected == category ? "◆  " : "   ") + label(category)),
                     button -> {
-                        selected = target;
-                        searchText = "";
-                        init();
-                    }).bounds(panelLeft + 12, navY, 132, 25).build());
+                        if (minecraft != null) {
+                            minecraft.setScreen(new ClientMenuScreen(parent, target));
+                        }
+                    }).bounds(panelLeft + 8, navY, Math.min(132, Math.max(96, contentLeft - panelLeft - 16)), 25).build());
             navY += 31;
         }
 
