@@ -33,6 +33,8 @@ public final class ClientConfig {
         DEFAULTS.put("Armor Durability", false);
         DEFAULTS.put("Biome Display", false);
         DEFAULTS.put("Dimension Display", false);
+        DEFAULTS.put("Speed Display", false);
+        DEFAULTS.put("Compass HUD", false);
         load();
         loadHudPosition();
     }

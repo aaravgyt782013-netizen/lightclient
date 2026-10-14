@@ -17,7 +17,7 @@ public final class ClientMenuScreen extends Screen {
     private static final Map<Category, List<String>> MODULES = Map.of(
             Category.HUD, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage",
                     "Keystrokes HUD", "Health Display", "Facing Direction", "World Time",
-                    "Held Item Durability", "Armor Durability", "Biome Display", "Dimension Display"),
+                    "Held Item Durability", "Armor Durability", "Biome Display", "Dimension Display", "Speed Display", "Compass HUD"),
             Category.PERFORMANCE, List.of(),
             Category.VISUALS, List.of(),
             Category.UTILITY, List.of(),
@@ -169,7 +169,7 @@ public final class ClientMenuScreen extends Screen {
                     contentLeft, panelTop + 108, 0xFFB7C7DF, false);
             graphics.fill(contentLeft, panelTop + 136, right - 18, panelTop + 198, 0xFF1B2940);
             graphics.drawString(font, "HUD SYSTEM", contentLeft + 12, panelTop + 148, 0xFF4DCBFF, false);
-            graphics.drawString(font, "12 configurable HUD modules currently available",
+            graphics.drawString(font, "14 configurable HUD modules currently available",
                     contentLeft + 12, panelTop + 169, 0xFFEAF4FF, false);
             graphics.fill(contentLeft, panelTop + 210, right - 18, panelTop + 272, 0xFF1B2940);
             graphics.drawString(font, "QUICK ACCESS", contentLeft + 12, panelTop + 222, 0xFF4DCBFF, false);

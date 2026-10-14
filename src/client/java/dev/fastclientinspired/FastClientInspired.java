@@ -68,6 +68,16 @@ public final class FastClientInspired implements ClientModInitializer {
                         .replace('_', ' ').toUpperCase(Locale.ROOT);
                 lines.add("DIMENSION  " + dimension);
             }
+            if (ClientConfig.isEnabled("Speed Display")) {
+                double blocksPerSecond = client.player.getDeltaMovement().horizontalDistance() * 20.0;
+                lines.add(String.format(Locale.ROOT, "SPEED  %.2f blocks/s", blocksPerSecond));
+            }
+            if (ClientConfig.isEnabled("Compass HUD")) {
+                float yaw = client.player.getYRot();
+                String[] directions = {"S", "SW", "W", "NW", "N", "NE", "E", "SE"};
+                int index = Math.floorMod(Math.round(yaw / 45.0f + 4), 8);
+                lines.add("COMPASS  " + directions[index] + "  (" + Math.round(yaw) + "°)");
+            }
             if (ClientConfig.isEnabled("Keystrokes HUD")) {
                 lines.add("KEYS  W " + key(client.options.keyUp) + "  A " + key(client.options.keyLeft)
                         + "  S " + key(client.options.keyDown) + "  D " + key(client.options.keyRight)
