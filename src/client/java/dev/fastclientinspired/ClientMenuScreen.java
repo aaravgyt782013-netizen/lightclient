@@ -149,7 +149,15 @@ public final class ClientMenuScreen extends Screen {
         }
     }
 
-    private int enabledModuleCount() {\n        int count = 0;\n        for (String module : MODULES.get(Category.HUD)) if (ClientConfig.isEnabled(module)) count++;\n        return count;\n    }\n\n    private Component moduleLabel(String module) {
+    private int enabledModuleCount() {
+        int count = 0;
+        for (String module : MODULES.get(Category.HUD)) {
+            if (ClientConfig.isEnabled(module)) count++;
+        }
+        return count;
+    }
+
+    private Component moduleLabel(String module) {
         return Component.literal((ClientConfig.isEnabled(module) ? "●  ON   " : "○  OFF  ") + module);
     }
 
