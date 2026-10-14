@@ -74,7 +74,7 @@ public final class ClientMenuScreen extends Screen {
             navY += 31;
         }
 
-        if (selected == Category.HUD) {
+        if (selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS || selected == Category.MODS) {
             search = new EditBox(font, contentLeft, panelTop + 72,
                     panelLeft + panelWidth - 20 - contentLeft, 24, Component.literal("Search modules"));
             search.setHint(Component.literal("Search HUD modules..."));
@@ -86,11 +86,11 @@ public final class ClientMenuScreen extends Screen {
             addRenderableWidget(search);
             int controlWidth = Math.max(90, (panelLeft + panelWidth - 20 - contentLeft - 6) / 2);
             addRenderableWidget(Button.builder(Component.literal("Enable All"), b -> {
-                for (String module : MODULES.get(Category.HUD)) ClientConfig.setEnabled(module, true);
+                for (String module : MODULES.getOrDefault(selected, List.of())) ClientConfig.setEnabled(module, true);
                 rebuildModuleButtons();
             }).bounds(contentLeft, panelTop + 101, controlWidth, 24).build());
             addRenderableWidget(Button.builder(Component.literal("Disable All"), b -> {
-                for (String module : MODULES.get(Category.HUD)) ClientConfig.setEnabled(module, false);
+                for (String module : MODULES.getOrDefault(selected, List.of())) ClientConfig.setEnabled(module, false);
                 rebuildModuleButtons();
             }).bounds(contentLeft + controlWidth + 6, panelTop + 101, controlWidth, 24).build());
             rebuildModuleButtons();
@@ -141,10 +141,10 @@ public final class ClientMenuScreen extends Screen {
         for (Button button : moduleButtons) removeWidget(button);
         moduleButtons.clear();
         int availableWidth = panelLeft + panelWidth - 20 - contentLeft;
-        if (selected != Category.HUD) return;
+        if (!(selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS || selected == Category.MODS)) return;
 
         int row = 0;
-        for (String module : MODULES.get(Category.HUD)) {
+        for (String module : MODULES.getOrDefault(selected, List.of())) {
             if (!module.toLowerCase(Locale.ROOT).contains(searchText.toLowerCase(Locale.ROOT))) continue;
             int col = row % 2;
             int line = row / 2;
@@ -206,7 +206,7 @@ public final class ClientMenuScreen extends Screen {
             graphics.drawString(font, "QUICK ACCESS", contentLeft + 12, panelTop + 222, 0xFF4DCBFF, false);
             graphics.drawString(font, "Manage overlays in HUD Modules, then drag them in HUD Editor.",
                     contentLeft + 12, panelTop + 243, 0xFFEAF4FF, false);
-        } else if (selected == Category.HUD) {
+        } else if (selected == Category.HUD || selected == Category.PERFORMANCE || selected == Category.VISUALS || selected == Category.MODS) {
             graphics.drawString(font, "Toggle a module to enable or disable it. Choices are saved automatically.",
                     contentLeft, panelTop + 58, 0xFFB7C7DF, false);
             if (moduleButtons.isEmpty()) {
