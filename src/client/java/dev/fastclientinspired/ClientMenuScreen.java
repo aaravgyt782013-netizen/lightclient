@@ -116,8 +116,25 @@ public final class ClientMenuScreen extends Screen {
             }).bounds(contentLeft, panelTop + 226, buttonWidth, 28).build());
         }
 
+        if (selected == Category.HOME) {
+            int quickY = panelTop + 290;
+            int quickWidth = Math.max(90, (panelLeft + panelWidth - contentLeft - 26) / 2);
+            addRenderableWidget(Button.builder(Component.literal("HUD Modules"), b ->
+                    minecraft.setScreen(new ClientMenuScreen(parent, Category.HUD)))
+                    .bounds(contentLeft, quickY, quickWidth, 28).build());
+            addRenderableWidget(Button.builder(Component.literal("Visual Settings"), b ->
+                    minecraft.setScreen(new ClientMenuScreen(parent, Category.VISUALS)))
+                    .bounds(contentLeft + quickWidth + 8, quickY, quickWidth, 28).build());
+            addRenderableWidget(Button.builder(Component.literal("Performance"), b ->
+                    minecraft.setScreen(new ClientMenuScreen(parent, Category.PERFORMANCE)))
+                    .bounds(contentLeft, quickY + 36, quickWidth, 28).build());
+            addRenderableWidget(Button.builder(Component.literal("Utilities"), b ->
+                    minecraft.setScreen(new ClientMenuScreen(parent, Category.UTILITY)))
+                    .bounds(contentLeft + quickWidth + 8, quickY + 36, quickWidth, 28).build());
+        }
+
         int footerY = panelTop + panelHeight - 42;
-        addRenderableWidget(Button.builder(Component.literal("HUD Editor"), button ->
+        addRenderableWidget(Button.builder(Component.literal("Edit HUD Layout"), button ->
                 minecraft.setScreen(new HudEditorScreen(this)))
                 .bounds(contentLeft, footerY, 150, 26).build());
         addRenderableWidget(Button.builder(Component.literal("Done"), button -> onClose())
@@ -180,8 +197,9 @@ public final class ClientMenuScreen extends Screen {
         graphics.fill(0, 0, width, height, 0xFF0B111B);
         int right = panelLeft + panelWidth;
         int bottom = panelTop + panelHeight;
-        graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF4DCBFF);
+        graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF263B55);
         graphics.fill(panelLeft, panelTop, right, bottom, 0xF0101624);
+        graphics.fill(panelLeft, panelTop, panelLeft + 3, bottom, 0xFF4DCBFF);
         graphics.fill(panelLeft, panelTop, right, panelTop + 58, 0xFF1B2940);
         graphics.fill(panelLeft + 1, panelTop + 59, contentLeft - 4, bottom - 1, 0xFF111B2B);
         graphics.fill(contentLeft - 10, panelTop + 66, contentLeft - 8, bottom - 54, 0xFF31445F);
