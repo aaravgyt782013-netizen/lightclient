@@ -12,14 +12,16 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class ClientMenuScreen extends Screen {
-    private enum Category { HOME, HUD, PERFORMANCE, VISUALS, UTILITY, ABOUT }
+    private enum Category { HOME, HUD, PERFORMANCE, VISUALS, MODS, HACKS, UTILITY, ABOUT }
 
     private static final Map<Category, List<String>> MODULES = Map.of(
             Category.HUD, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage",
                     "Keystrokes HUD", "Health Display", "Facing Direction", "World Time",
                     "Held Item Durability", "Armor Durability", "Biome Display", "Dimension Display", "Speed Display", "Compass HUD"),
-            Category.PERFORMANCE, List.of(),
-            Category.VISUALS, List.of(),
+            Category.PERFORMANCE, List.of("Compact HUD", "Hide HUD in F1"),
+            Category.VISUALS, List.of("Transparent HUD", "HUD Background", "Accent Bar"),
+            Category.MODS, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage", "Keystrokes HUD", "Health Display", "Facing Direction", "World Time", "Held Item Durability", "Armor Durability", "Biome Display", "Dimension Display", "Speed Display", "Compass HUD"),
+            Category.HACKS, List.of(),
             Category.UTILITY, List.of(),
             Category.HOME, List.of(),
             Category.ABOUT, List.of()
@@ -128,6 +130,8 @@ public final class ClientMenuScreen extends Screen {
             case HUD -> "HUD Modules";
             case PERFORMANCE -> "Performance";
             case VISUALS -> "Visuals";
+            case MODS -> "Mod Library";
+            case HACKS -> "Hacks / Practice";
             case UTILITY -> "Utilities";
             case ABOUT -> "About LightClient";
         };
@@ -221,6 +225,14 @@ public final class ClientMenuScreen extends Screen {
             graphics.drawString(font, "VISUAL MODULES", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
             graphics.drawString(font, "Visual enhancements will be added when their behavior is ready.",
                     contentLeft, panelTop + 114, 0xFFB7C7DF, false);
+        } else if (selected == Category.HACKS) {
+            graphics.drawString(font, "PRACTICE / DEBUG TOOLS", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
+            graphics.drawString(font, "LightClient focuses on client-side HUD, accessibility and testing tools.",
+                    contentLeft, panelTop + 114, 0xFFB7C7DF, false);
+            graphics.drawString(font, "No combat automation or anti-cheat bypass is bundled here.",
+                    contentLeft, panelTop + 136, 0xFFEAF4FF, false);
+            graphics.drawString(font, "Use Minecraft's built-in debug overlays for private-world testing.",
+                    contentLeft, panelTop + 158, 0xFFEAF4FF, false);
         } else if (selected == Category.UTILITY) {
             graphics.drawString(font, "CLIENT UTILITIES", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
             graphics.drawString(font, "Save and restore your HUD module selections below.",
