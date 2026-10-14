@@ -63,16 +63,19 @@ public final class LightClientHomeScreen extends Screen {
 
     @Override public void render(GuiGraphics g, int mx, int my, float tick) {
         g.fill(0, 0, width, height, BG);
-        g.fill(0, 0, width, height / 2, 0xFF0A1423);\n        g.fill(0, height / 2, width, height, 0xFF070B13);
+        g.fill(0, 0, width, height / 2, 0xFF0A1423);
+        g.fill(0, height / 2, width, height, 0xFF070B13);
         g.fill(0, 0, width, 2, BLUE);
         g.fill(0, height - 2, width, height, 0xFF1C2B40);
 
-        g.fill(left - 2, top - 2, left + widthPanel + 2, top + heightPanel + 2, 0x553B76B8);\n        g.fill(left, top, left + widthPanel, top + heightPanel, PANEL);
+        g.fill(left - 2, top - 2, left + widthPanel + 2, top + heightPanel + 2, 0x553B76B8);
+        g.fill(left, top, left + widthPanel, top + heightPanel, PANEL);
         g.fill(left, top, left + widthPanel, top + 3, BLUE);
         g.fill(left, top + 3, left + 1, top + heightPanel, 0xFF22334A);
         if (wide) {
             int heroW = widthPanel - 310;
-            g.fill(left + 1, top + 3, left + heroW, top + heightPanel - 1, 0xFF091321);\n            g.fill(left + heroW, top + 3, left + heroW + 1, top + heightPanel - 1, 0xFF263A52);
+            g.fill(left + 1, top + 3, left + heroW, top + heightPanel - 1, 0xFF091321);
+            g.fill(left + heroW, top + 3, left + heroW + 1, top + heightPanel - 1, 0xFF263A52);
             g.fill(left + 20, top + 24, left + 67, top + 28, CYAN);
             g.drawString(font, "LIGHTCLIENT", left + 20, top + 42, 0xFFFFFFFF, false);
             g.drawString(font, "MINECRAFT CLIENT", left + 20, top + 59, CYAN, false);
