@@ -16,7 +16,8 @@ public final class ClientMenuScreen extends Screen {
 
     private static final Map<Category, List<String>> MODULES = Map.of(
             Category.HUD, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage",
-                    "Keystrokes HUD", "Health Display", "Facing Direction"),
+                    "Keystrokes HUD", "Health Display", "Facing Direction", "World Time",
+                    "Held Item Durability", "Armor Durability"),
             Category.PERFORMANCE, List.of(),
             Category.VISUALS, List.of(),
             Category.UTILITY, List.of(),
@@ -97,7 +98,6 @@ public final class ClientMenuScreen extends Screen {
     private void rebuildModuleButtons() {
         for (Button button : moduleButtons) removeWidget(button);
         moduleButtons.clear();
-
         int availableWidth = panelLeft + panelWidth - 20 - contentLeft;
         if (selected != Category.HUD) return;
 
@@ -148,11 +148,11 @@ public final class ClientMenuScreen extends Screen {
                     contentLeft, panelTop + 108, 0xFFB7C7DF, false);
             graphics.fill(contentLeft, panelTop + 136, right - 18, panelTop + 198, 0xFF1B2940);
             graphics.drawString(font, "HUD SYSTEM", contentLeft + 12, panelTop + 148, 0xFF4DCBFF, false);
-            graphics.drawString(font, "7 configurable HUD modules currently available",
+            graphics.drawString(font, "10 configurable HUD modules currently available",
                     contentLeft + 12, panelTop + 169, 0xFFEAF4FF, false);
             graphics.fill(contentLeft, panelTop + 210, right - 18, panelTop + 272, 0xFF1B2940);
             graphics.drawString(font, "QUICK ACCESS", contentLeft + 12, panelTop + 222, 0xFF4DCBFF, false);
-            graphics.drawString(font, "Choose HUD Modules to manage overlays, or open the HUD Editor below.",
+            graphics.drawString(font, "Manage overlays in HUD Modules, then drag them in HUD Editor.",
                     contentLeft + 12, panelTop + 243, 0xFFEAF4FF, false);
         } else if (selected == Category.HUD) {
             graphics.drawString(font, "Toggle a module to enable or disable it. Choices are saved automatically.",
@@ -163,27 +163,27 @@ public final class ClientMenuScreen extends Screen {
             }
         } else if (selected == Category.PERFORMANCE) {
             graphics.drawString(font, "PERFORMANCE TOOLKIT", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
-            graphics.drawString(font, "The dedicated settings panel is planned for the next stage.",
+            graphics.drawString(font, "Use Minecraft Video Settings to tune render distance,",
                     contentLeft, panelTop + 114, 0xFFB7C7DF, false);
-            graphics.drawString(font, "For now, use Minecraft Video Settings to tune render distance,",
-                    contentLeft, panelTop + 148, 0xFFEAF4FF, false);
             graphics.drawString(font, "simulation distance, particles, clouds and graphics quality.",
+                    contentLeft, panelTop + 134, 0xFFEAF4FF, false);
+            graphics.drawString(font, "LightClient will only expose settings it can safely apply.",
                     contentLeft, panelTop + 164, 0xFFEAF4FF, false);
         } else if (selected == Category.VISUALS) {
             graphics.drawString(font, "VISUAL MODULES", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
-            graphics.drawString(font, "This category is reserved for implemented visual enhancements.",
+            graphics.drawString(font, "Visual enhancements will be added when their behavior is ready.",
                     contentLeft, panelTop + 114, 0xFFB7C7DF, false);
-            graphics.drawString(font, "Modules will appear here when their behavior is ready.",
-                    contentLeft, panelTop + 134, 0xFFEAF4FF, false);
         } else if (selected == Category.UTILITY) {
             graphics.drawString(font, "CLIENT UTILITIES", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
-            graphics.drawString(font, "Keybinds, profiles and quality-of-life tools are planned here.",
+            graphics.drawString(font, "Open Options > Controls to rebind the LightClient menu key.",
                     contentLeft, panelTop + 114, 0xFFB7C7DF, false);
+            graphics.drawString(font, "Default menu key: Right Shift.", contentLeft, panelTop + 136,
+                    0xFFEAF4FF, false);
         } else if (selected == Category.ABOUT) {
             graphics.drawString(font, "LIGHTCLIENT", contentLeft, panelTop + 90, 0xFFFFFFFF, false);
             graphics.drawString(font, "An independent client-side mod for Minecraft Java 1.21.11.",
                     contentLeft, panelTop + 114, 0xFFB7C7DF, false);
-            graphics.drawString(font, "Open the hub with Right Shift while in a world.",
+            graphics.drawString(font, "Open the hub with the configurable menu key while in a world.",
                     contentLeft, panelTop + 136, 0xFFEAF4FF, false);
         }
         super.render(graphics, mouseX, mouseY, delta);

@@ -27,6 +27,9 @@ public final class ClientConfig {
         DEFAULTS.put("Keystrokes HUD", false);
         DEFAULTS.put("Health Display", false);
         DEFAULTS.put("Facing Direction", false);
+        DEFAULTS.put("World Time", false);
+        DEFAULTS.put("Held Item Durability", false);
+        DEFAULTS.put("Armor Durability", false);
         load();
         loadHudPosition();
     }

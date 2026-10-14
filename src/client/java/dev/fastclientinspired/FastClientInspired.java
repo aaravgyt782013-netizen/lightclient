@@ -7,11 +7,14 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public final class FastClientInspired implements ClientModInitializer {
     public static final String MOD_ID = "fastclientinspired";
@@ -49,16 +52,44 @@ public final class FastClientInspired implements ClientModInitializer {
                         + " / " + (runtime.maxMemory() / (1024 * 1024)) + " MB");
             }
             if (ClientConfig.isEnabled("Health Display")) {
-                lines.add(String.format(java.util.Locale.ROOT, "HEALTH  %.1f / %.1f",
+                lines.add(String.format(Locale.ROOT, "HEALTH  %.1f / %.1f",
                         client.player.getHealth(), client.player.getMaxHealth()));
             }
             if (ClientConfig.isEnabled("Facing Direction")) {
-                lines.add("FACING  " + client.player.getDirection().getName().toUpperCase(java.util.Locale.ROOT));
+                lines.add("FACING  " + client.player.getDirection().getName().toUpperCase(Locale.ROOT));
             }
             if (ClientConfig.isEnabled("Keystrokes HUD")) {
                 lines.add("KEYS  " + key(client.options.keyUp) + key(client.options.keyLeft)
                         + key(client.options.keyDown) + key(client.options.keyRight)
                         + "  JUMP " + key(client.options.keyJump));
+            }
+            if (ClientConfig.isEnabled("World Time") && client.level != null) {
+                long time = Math.floorMod(client.level.getDayTime(), 24000L);
+                long hour = (time / 1000 + 6) % 24;
+                long minute = (time % 1000) * 60 / 1000;
+                lines.add(String.format(Locale.ROOT, "WORLD TIME  %02d:%02d", hour, minute));
+            }
+            if (ClientConfig.isEnabled("Held Item Durability")) {
+                ItemStack held = client.player.getMainHandItem();
+                if (!held.isEmpty() && held.isDamageableItem()) {
+                    int remaining = held.getMaxDamage() - held.getDamageValue();
+                    lines.add("ITEM DURABILITY  " + remaining + " / " + held.getMaxDamage());
+                }
+            }
+            if (ClientConfig.isEnabled("Armor Durability")) {
+                StringBuilder armor = new StringBuilder("ARMOR  ");
+                boolean found = false;
+                for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                        EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+                    ItemStack piece = client.player.getItemBySlot(slot);
+                    if (piece.isDamageableItem()) {
+                        if (found) armor.append("  ");
+                        armor.append(slotName(slot)).append(' ')
+                                .append(piece.getMaxDamage() - piece.getDamageValue());
+                        found = true;
+                    }
+                }
+                if (found) lines.add(armor.toString());
             }
 
             int x = Math.min(ClientConfig.hudX(), Math.max(0, graphics.guiWidth() - 180));
@@ -71,6 +102,16 @@ public final class FastClientInspired implements ClientModInitializer {
                 y += 14;
             }
         });
+    }
+
+    private static String slotName(EquipmentSlot slot) {
+        return switch (slot) {
+            case HEAD -> "H";
+            case CHEST -> "C";
+            case LEGS -> "L";
+            case FEET -> "B";
+            default -> "?";
+        };
     }
 
     private static String key(KeyMapping mapping) { return mapping.isDown() ? "■" : "□"; }
