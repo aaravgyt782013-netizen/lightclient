@@ -23,12 +23,7 @@ public final class ClientConfig {
         DEFAULTS.put("Memory Usage", false);
         DEFAULTS.put("Keystrokes HUD", false);
         DEFAULTS.put("Health Display", false);
-        DEFAULTS.put("Fullbright", false);
-        DEFAULTS.put("Low Fire", false);
-        DEFAULTS.put("Particles", true);
-        DEFAULTS.put("Zoom", false);
-        DEFAULTS.put("Time Changer", false);
-        DEFAULTS.put("Weather Changer", false);
+        DEFAULTS.put("Facing Direction", false);
         load();
     }
 
@@ -39,6 +34,7 @@ public final class ClientConfig {
     }
 
     public static synchronized void setEnabled(String module, boolean value) {
+        if (!DEFAULTS.containsKey(module)) return;
         enabled.put(module, value);
         save();
     }

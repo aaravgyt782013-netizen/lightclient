@@ -6,91 +6,134 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public final class ClientMenuScreen extends Screen {
-    private enum Category { HUD, RENDER, PLAYER, MISC }
+    private enum Category { HUD, PERFORMANCE, ABOUT }
 
     private static final Map<Category, List<String>> CATEGORIES = Map.of(
-            Category.HUD, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage", "Keystrokes HUD", "Health Display"),
-            Category.RENDER, List.of("Fullbright", "Low Fire", "Particles"),
-            Category.PLAYER, List.of("Zoom", "Time Changer", "Weather Changer"),
-            Category.MISC, List.of()
+            Category.HUD, List.of("FPS Counter", "Coordinates", "Ping Display", "Memory Usage",
+                    "Keystrokes HUD", "Health Display", "Facing Direction"),
+            Category.PERFORMANCE, List.of(),
+            Category.ABOUT, List.of()
     );
 
     private final Screen parent;
     private Category selected = Category.HUD;
     private EditBox search;
+    private final List<Button> moduleButtons = new ArrayList<>();
+    private String searchText = "";
     private int panelLeft;
     private int panelTop;
 
     public ClientMenuScreen(Screen parent) {
-        super(Component.literal("FastClient-Inspired"));
+        super(Component.literal("LightClient"));
         this.parent = parent;
     }
 
     @Override
     protected void init() {
         clearWidgets();
-        panelLeft = Math.max(12, (width - 500) / 2);
-        panelTop = Math.max(12, (height - 330) / 2);
+        moduleButtons.clear();
+        panelLeft = Math.max(8, (width - 560) / 2);
+        panelTop = Math.max(8, (height - 360) / 2);
 
         int tabX = panelLeft + 14;
         int tabY = panelTop + 62;
-        int tabIndex = 0;
+        int tabWidth = 166;
         for (Category category : Category.values()) {
             final Category target = category;
-            addRenderableWidget(Button.builder(Component.literal((selected == category ? "● " : "") + category.name()),
+            addRenderableWidget(Button.builder(Component.literal((selected == category ? "●  " : "") + category.name()),
                     button -> {
                         selected = target;
                         init();
-                    }).bounds(tabX + tabIndex * 116, tabY, 108, 26).build());
-            tabIndex++;
+                    }).bounds(tabX, tabY, tabWidth, 26).build());
+            tabX += tabWidth + 10;
         }
 
-        search = new EditBox(font, panelLeft + 14, panelTop + 98, 472, 24, Component.literal("Search modules"));
-        search.setHint(Component.literal("Search modules..."));
-        search.setValue("");
+        search = new EditBox(font, panelLeft + 14, panelTop + 98, 532, 24, Component.literal("Search modules"));
+        search.setHint(Component.literal("Search active HUD modules..."));
+        search.setValue(searchText);
+        search.setResponder(value -> {
+            searchText = value;
+            rebuildModuleButtons();
+        });
         addRenderableWidget(search);
 
-        List<String> modules = CATEGORIES.get(selected);
-        int row = 0;
-        for (String module : modules) {
-            if (!search.getValue().isBlank()
-                    && !module.toLowerCase(Locale.ROOT).contains(search.getValue().toLowerCase(Locale.ROOT))) continue;
-            int col = row % 2;
-            int line = row / 2;
-            int x = panelLeft + 14 + col * 238;
-            int y = panelTop + 134 + line * 38;
-            addRenderableWidget(Button.builder(moduleLabel(module), button -> {
-                ClientConfig.setEnabled(module, !ClientConfig.isEnabled(module));
-                button.setMessage(moduleLabel(module));
-            }).bounds(x, y, 228, 30).build());
-            row++;
-        }
+        rebuildModuleButtons();
 
         addRenderableWidget(Button.builder(Component.literal("Done"), button -> onClose())
-                .bounds(panelLeft + 14, panelTop + 286, 472, 28).build());
+                .bounds(panelLeft + 14, panelTop + 320, 532, 26).build());
+    }
+
+    private void rebuildModuleButtons() {
+        for (Button button : moduleButtons) removeWidget(button);
+        moduleButtons.clear();
+
+        if (selected == Category.PERFORMANCE) {
+            addInfoButton("Performance settings", "Use Minecraft Video Settings for render distance, simulation distance, clouds, particles and graphics quality.");
+            addInfoButton("Compatibility first", "This client does not force unsafe JVM flags or silently change worlds/server settings.");
+            return;
+        }
+        if (selected == Category.ABOUT) {
+            addInfoButton("LightClient", "Original client-side enhancements for Minecraft Java 1.21.11.");
+            addInfoButton("Menu key", "Press Right Shift in a world to open this client hub.");
+            return;
+        }
+
+        int row = 0;
+        for (String module : CATEGORIES.get(selected)) {
+            if (!module.toLowerCase(Locale.ROOT).contains(searchText.toLowerCase(Locale.ROOT))) continue;
+            int col = row % 2;
+            int line = row / 2;
+            int x = panelLeft + 14 + col * 270;
+            int y = panelTop + 134 + line * 38;
+            Button button = Button.builder(moduleLabel(module), b -> {
+                ClientConfig.setEnabled(module, !ClientConfig.isEnabled(module));
+                b.setMessage(moduleLabel(module));
+            }).bounds(x, y, 260, 30).build();
+            moduleButtons.add(button);
+            addRenderableWidget(button);
+            row++;
+        }
+        if (moduleButtons.isEmpty()) {
+            addInfoButton("No matching modules", "Try another search or choose the HUD tab.");
+        }
+    }
+
+    private void addInfoButton(String title, String detail) {
+        Button button = Button.builder(Component.literal(title), b -> {}).bounds(
+                panelLeft + 14, panelTop + 140 + moduleButtons.size() * 62, 532, 52).build();
+        moduleButtons.add(button);
+        addRenderableWidget(button);
     }
 
     private Component moduleLabel(String module) {
-        return Component.literal((ClientConfig.isEnabled(module) ? "●  " : "○  ") + module);
+        return Component.literal((ClientConfig.isEnabled(module) ? "●  ON   " : "○  OFF  ") + module);
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         renderBackground(graphics, mouseX, mouseY, delta);
-        int right = panelLeft + 500;
-        int bottom = panelTop + 330;
-        graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF55C7FF);
-        graphics.fill(panelLeft, panelTop, right, bottom, 0xF0141824);
-        graphics.fill(panelLeft, panelTop, right, panelTop + 48, 0xFF202B42);
-        graphics.drawString(font, "FASTCLIENT-INSPIRED", panelLeft + 16, panelTop + 12, 0xFFFFFFFF, false);
-        graphics.drawString(font, "CLIENT CONFIGURATION  /  RIGHT SHIFT", panelLeft + 16, panelTop + 30, 0xFF9DB4D8, false);
-        graphics.drawString(font, "MODULES  ·  " + selected.name(), panelLeft + 16, panelTop + 51, 0xFF55C7FF, false);
+        int right = panelLeft + 560;
+        int bottom = panelTop + 360;
+        graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF4DCBFF);
+        graphics.fill(panelLeft, panelTop, right, bottom, 0xF0101624);
+        graphics.fill(panelLeft, panelTop, right, panelTop + 48, 0xFF1B2940);
+        graphics.drawString(font, "LIGHTCLIENT", panelLeft + 16, panelTop + 11, 0xFFFFFFFF, false);
+        graphics.drawString(font, "CLIENT HUB  /  RIGHT SHIFT", panelLeft + 16, panelTop + 29, 0xFF9DB4D8, false);
+        graphics.drawString(font, selected == Category.HUD ? "HUD MODULES" : selected.name(),
+                panelLeft + 16, panelTop + 51, 0xFF4DCBFF, false);
         super.render(graphics, mouseX, mouseY, delta);
+        if (selected == Category.PERFORMANCE) {
+            graphics.drawString(font, "Render distance and graphics options remain controlled by Minecraft.", panelLeft + 24,
+                    panelTop + 210, 0xFFCBD7E8, false);
+        } else if (selected == Category.ABOUT) {
+            graphics.drawString(font, "Build tested by GitHub Actions.", panelLeft + 24, panelTop + 210, 0xFFCBD7E8, false);
+        }
     }
 
     @Override
