@@ -66,7 +66,7 @@ public final class ClientMenuScreen extends Screen {
         int navY = panelTop + 78;
         for (Category category : Category.values()) {
             Category target = category;
-            addRenderableWidget(ClientButton.builder(Component.literal((selected == category ? "◆  " : "   ") + label(category)),
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal((selected == category ? "◆  " : "   ") + label(category)),
                     button -> {
                         if (minecraft != null) {
                             minecraft.setScreen(new ClientMenuScreen(parent, target));
@@ -86,11 +86,11 @@ public final class ClientMenuScreen extends Screen {
             });
             addRenderableWidget(search);
             int controlWidth = Math.max(90, (panelLeft + panelWidth - 20 - contentLeft - 6) / 2);
-            addRenderableWidget(ClientButton.builder(Component.literal("Enable All"), b -> {
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Enable All"), b -> {
                 for (String module : MODULES.getOrDefault(selected, List.of())) ClientConfig.setEnabled(module, true);
                 rebuildModuleButtons();
             }).bounds(contentLeft, panelTop + 101, controlWidth, 24).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Disable All"), b -> {
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Disable All"), b -> {
                 for (String module : MODULES.getOrDefault(selected, List.of())) ClientConfig.setEnabled(module, false);
                 rebuildModuleButtons();
             }).bounds(contentLeft + controlWidth + 6, panelTop + 101, controlWidth, 24).build());
@@ -99,18 +99,18 @@ public final class ClientMenuScreen extends Screen {
 
         if (selected == Category.UTILITY) {
             int buttonWidth = Math.min(220, panelWidth - 190);
-            addRenderableWidget(ClientButton.builder(Component.literal("Save Current Profile"), b -> {
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Save Current Profile"), b -> {
                 boolean saved = ClientConfig.saveProfile();
                 utilityNotice = saved ? "Profile saved to the LightClient config folder."
                         : "Could not save profile. Check the game log.";
             }).bounds(contentLeft, panelTop + 154, buttonWidth, 28).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Load Saved Profile"), b -> {
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Load Saved Profile"), b -> {
                 boolean loaded = ClientConfig.loadProfile();
                 utilityNotice = loaded ? "Saved module settings loaded."
                         : "No saved profile found yet. Save one first.";
                 init();
             }).bounds(contentLeft, panelTop + 190, buttonWidth, 28).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Reset Module Toggles"), b -> {
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Reset Module Toggles"), b -> {
                 ClientConfig.resetModules();
                 utilityNotice = "Module toggles restored to their defaults.";
                 init();
@@ -120,25 +120,25 @@ public final class ClientMenuScreen extends Screen {
         if (selected == Category.HOME) {
             int quickY = panelTop + panelHeight - 120;
             int quickWidth = Math.max(90, (panelLeft + panelWidth - contentLeft - 26) / 2);
-            addRenderableWidget(ClientButton.builder(Component.literal("HUD Modules"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("HUD Modules"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.HUD)))
                     .bounds(contentLeft, quickY, quickWidth, 28).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Visual Settings"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Visual Settings"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.VISUALS)))
                     .bounds(contentLeft + quickWidth + 8, quickY, quickWidth, 28).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Performance"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Performance"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.PERFORMANCE)))
                     .bounds(contentLeft, quickY + 36, quickWidth, 28).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Utilities"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Utilities"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.UTILITY)))
                     .bounds(contentLeft + quickWidth + 8, quickY + 36, quickWidth, 28).build());
         }
 
         int footerY = panelTop + panelHeight - 42;
-        addRenderableWidget(ClientButton.builder(Component.literal("Edit HUD Layout"), button ->
+        addRenderableWidget(ClientButton.clientBuilder(Component.literal("Edit HUD Layout"), button ->
                 minecraft.setScreen(new HudEditorScreen(this)))
                 .bounds(contentLeft, footerY, 150, 26).build());
-        addRenderableWidget(ClientButton.builder(Component.literal("Done"), button -> onClose())
+        addRenderableWidget(ClientButton.clientBuilder(Component.literal("Done"), button -> onClose())
                 .bounds(panelLeft + panelWidth - 142, footerY, 126, 26).build());
     }
 
@@ -169,7 +169,7 @@ public final class ClientMenuScreen extends Screen {
             int x = contentLeft + col * (availableWidth / 2 + 4);
             int y = panelTop + 134 + line * 38;
             int buttonWidth = (availableWidth - 8) / 2;
-            Button button = ClientButton.builder(moduleLabel(module), b -> {
+            Button button = ClientButton.clientBuilder(moduleLabel(module), b -> {
                 ClientConfig.setEnabled(module, !ClientConfig.isEnabled(module));
                 b.setMessage(moduleLabel(module));
             }).bounds(x, y, buttonWidth, 30).build();

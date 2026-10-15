@@ -27,31 +27,31 @@ public final class LightClientShellScreen extends Screen {
         int x = (width - buttonWidth) / 2;
         int y = Math.max(104, height / 2 - (home ? 62 : 42));
         if (home) {
-            addRenderableWidget(ClientButton.builder(Component.literal("Singleplayer"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Singleplayer"), b ->
                     minecraft.setScreen(new SelectWorldScreen(this)))
                     .bounds(x, y, buttonWidth, 26).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Multiplayer"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Multiplayer"), b ->
                     minecraft.setScreen(new JoinMultiplayerScreen(this)))
                     .bounds(x, y + 32, buttonWidth, 26).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Settings"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Settings"), b ->
                     minecraft.setScreen(new OptionsScreen(this, minecraft.options)))
                     .bounds(x, y + 64, buttonWidth, 26).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("LightClient Hub"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("LightClient Hub"), b ->
                     minecraft.setScreen(new ClientMenuScreen(this)))
                     .bounds(x, y + 96, buttonWidth, 26).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Vanilla Title Screen"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Vanilla Title Screen"), b ->
                     minecraft.setScreen(vanillaParent))
                     .bounds(x, y + 128, buttonWidth, 22).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Quit Game"), b -> minecraft.stop())
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Quit Game"), b -> minecraft.stop())
                     .bounds(x, y + 156, buttonWidth, 22).build());
         } else {
-            addRenderableWidget(ClientButton.builder(Component.literal("Resume Game"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Resume Game"), b ->
                     minecraft.setScreen(null))
                     .bounds(x, y, buttonWidth, 28).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("LightClient Hub"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("LightClient Hub"), b ->
                     minecraft.setScreen(new ClientMenuScreen(this)))
                     .bounds(x, y + 36, buttonWidth, 28).build());
-            addRenderableWidget(ClientButton.builder(Component.literal("Vanilla Pause Menu"), b ->
+            addRenderableWidget(ClientButton.clientBuilder(Component.literal("Vanilla Pause Menu"), b ->
                     minecraft.setScreen(vanillaParent))
                     .bounds(x, y + 72, buttonWidth, 28).build());
         }

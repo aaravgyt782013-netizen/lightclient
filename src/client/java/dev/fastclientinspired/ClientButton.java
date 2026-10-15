@@ -10,9 +10,9 @@ public final class ClientButton extends Button {
     private ClientButton(int x, int y, int width, int height, Component message, OnPress onPress) {
         super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
     }
-    public static Builder builder(Component message, OnPress onPress) { return new Builder(message, onPress); }
+    public static Builder clientBuilder(Component message, OnPress onPress) { return new Builder(message, onPress); }
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         boolean hovered = isHovered();
         int edge = !active ? 0xFF303A32 : hovered ? 0xFF39FF14 : 0xFF34483A;
         int fill = !active ? 0xFF171D19 : hovered ? 0xFF24452B : 0xFF141C16;
