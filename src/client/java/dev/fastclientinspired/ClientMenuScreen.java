@@ -66,7 +66,7 @@ public final class ClientMenuScreen extends Screen {
         int navY = panelTop + 78;
         for (Category category : Category.values()) {
             Category target = category;
-            addRenderableWidget(Button.builder(Component.literal((selected == category ? "◆  " : "   ") + label(category)),
+            addRenderableWidget(ClientButton.builder(Component.literal((selected == category ? "◆  " : "   ") + label(category)),
                     button -> {
                         if (minecraft != null) {
                             minecraft.setScreen(new ClientMenuScreen(parent, target));
@@ -86,11 +86,11 @@ public final class ClientMenuScreen extends Screen {
             });
             addRenderableWidget(search);
             int controlWidth = Math.max(90, (panelLeft + panelWidth - 20 - contentLeft - 6) / 2);
-            addRenderableWidget(Button.builder(Component.literal("Enable All"), b -> {
+            addRenderableWidget(ClientButton.builder(Component.literal("Enable All"), b -> {
                 for (String module : MODULES.getOrDefault(selected, List.of())) ClientConfig.setEnabled(module, true);
                 rebuildModuleButtons();
             }).bounds(contentLeft, panelTop + 101, controlWidth, 24).build());
-            addRenderableWidget(Button.builder(Component.literal("Disable All"), b -> {
+            addRenderableWidget(ClientButton.builder(Component.literal("Disable All"), b -> {
                 for (String module : MODULES.getOrDefault(selected, List.of())) ClientConfig.setEnabled(module, false);
                 rebuildModuleButtons();
             }).bounds(contentLeft + controlWidth + 6, panelTop + 101, controlWidth, 24).build());
@@ -99,18 +99,18 @@ public final class ClientMenuScreen extends Screen {
 
         if (selected == Category.UTILITY) {
             int buttonWidth = Math.min(220, panelWidth - 190);
-            addRenderableWidget(Button.builder(Component.literal("Save Current Profile"), b -> {
+            addRenderableWidget(ClientButton.builder(Component.literal("Save Current Profile"), b -> {
                 boolean saved = ClientConfig.saveProfile();
                 utilityNotice = saved ? "Profile saved to the LightClient config folder."
                         : "Could not save profile. Check the game log.";
             }).bounds(contentLeft, panelTop + 154, buttonWidth, 28).build());
-            addRenderableWidget(Button.builder(Component.literal("Load Saved Profile"), b -> {
+            addRenderableWidget(ClientButton.builder(Component.literal("Load Saved Profile"), b -> {
                 boolean loaded = ClientConfig.loadProfile();
                 utilityNotice = loaded ? "Saved module settings loaded."
                         : "No saved profile found yet. Save one first.";
                 init();
             }).bounds(contentLeft, panelTop + 190, buttonWidth, 28).build());
-            addRenderableWidget(Button.builder(Component.literal("Reset Module Toggles"), b -> {
+            addRenderableWidget(ClientButton.builder(Component.literal("Reset Module Toggles"), b -> {
                 ClientConfig.resetModules();
                 utilityNotice = "Module toggles restored to their defaults.";
                 init();
@@ -120,25 +120,25 @@ public final class ClientMenuScreen extends Screen {
         if (selected == Category.HOME) {
             int quickY = panelTop + panelHeight - 120;
             int quickWidth = Math.max(90, (panelLeft + panelWidth - contentLeft - 26) / 2);
-            addRenderableWidget(Button.builder(Component.literal("HUD Modules"), b ->
+            addRenderableWidget(ClientButton.builder(Component.literal("HUD Modules"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.HUD)))
                     .bounds(contentLeft, quickY, quickWidth, 28).build());
-            addRenderableWidget(Button.builder(Component.literal("Visual Settings"), b ->
+            addRenderableWidget(ClientButton.builder(Component.literal("Visual Settings"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.VISUALS)))
                     .bounds(contentLeft + quickWidth + 8, quickY, quickWidth, 28).build());
-            addRenderableWidget(Button.builder(Component.literal("Performance"), b ->
+            addRenderableWidget(ClientButton.builder(Component.literal("Performance"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.PERFORMANCE)))
                     .bounds(contentLeft, quickY + 36, quickWidth, 28).build());
-            addRenderableWidget(Button.builder(Component.literal("Utilities"), b ->
+            addRenderableWidget(ClientButton.builder(Component.literal("Utilities"), b ->
                     minecraft.setScreen(new ClientMenuScreen(parent, Category.UTILITY)))
                     .bounds(contentLeft + quickWidth + 8, quickY + 36, quickWidth, 28).build());
         }
 
         int footerY = panelTop + panelHeight - 42;
-        addRenderableWidget(Button.builder(Component.literal("Edit HUD Layout"), button ->
+        addRenderableWidget(ClientButton.builder(Component.literal("Edit HUD Layout"), button ->
                 minecraft.setScreen(new HudEditorScreen(this)))
                 .bounds(contentLeft, footerY, 150, 26).build());
-        addRenderableWidget(Button.builder(Component.literal("Done"), button -> onClose())
+        addRenderableWidget(ClientButton.builder(Component.literal("Done"), button -> onClose())
                 .bounds(panelLeft + panelWidth - 142, footerY, 126, 26).build());
     }
 
@@ -169,7 +169,7 @@ public final class ClientMenuScreen extends Screen {
             int x = contentLeft + col * (availableWidth / 2 + 4);
             int y = panelTop + 134 + line * 38;
             int buttonWidth = (availableWidth - 8) / 2;
-            Button button = Button.builder(moduleLabel(module), b -> {
+            Button button = ClientButton.builder(moduleLabel(module), b -> {
                 ClientConfig.setEnabled(module, !ClientConfig.isEnabled(module));
                 b.setMessage(moduleLabel(module));
             }).bounds(x, y, buttonWidth, 30).build();
@@ -195,19 +195,23 @@ public final class ClientMenuScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Avoid Minecraft's per-frame blur pass: this screen can be rendered over another
         // screen that already blurred the frame, which crashes on 1.21.11.
-        graphics.fill(0, 0, width, height, 0xFF050805);
+        graphics.fill(0, 0, width, height, 0xFF050806);
+        graphics.fill(0, 0, width, height / 2, 0xFF09110B);
+        graphics.fill(0, height / 2, width, height, 0xFF050806);
         int right = panelLeft + panelWidth;
         int bottom = panelTop + panelHeight;
-        graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF24552D);
-        graphics.fill(panelLeft, panelTop, right, bottom, 0xF00A100B);
+        graphics.fill(panelLeft - 2, panelTop - 2, right + 2, bottom + 2, 0xFF263E2B);
+        graphics.fill(panelLeft, panelTop, right, bottom, 0xFF0A100C);
         graphics.fill(panelLeft, panelTop, panelLeft + 3, bottom, 0xFF39FF14);
-        graphics.fill(panelLeft, panelTop, right, panelTop + 58, 0xFF101D12);
-        graphics.fill(panelLeft + 1, panelTop + 59, contentLeft - 4, bottom - 1, 0xFF0B130D);
-        graphics.fill(contentLeft - 10, panelTop + 66, contentLeft - 8, bottom - 54, 0xFF24432A);
+        graphics.fill(panelLeft, panelTop, right, panelTop + 58, 0xFF111A13);
+        graphics.fill(panelLeft + 1, panelTop + 59, contentLeft - 4, bottom - 1, 0xFF0B120D);
+        graphics.fill(contentLeft - 10, panelTop + 66, contentLeft - 8, bottom - 54, 0xFF263D2A);
+        graphics.fill(contentLeft, panelTop + 55, right - 1, panelTop + 57, 0xFF1B2B1E);
 
-        graphics.drawString(font, "LIGHTCLIENT", panelLeft + 18, panelTop + 12, 0xFFF1FFF1, false);
-        graphics.drawString(font, "CLIENT EXPERIENCE  •  1.21.11", panelLeft + 18, panelTop + 32,
-                0xFF8BBF8D, false);
+        graphics.drawString(font, "LIGHTCLIENT", panelLeft + 18, panelTop + 10, 0xFFF1FFF1, false);
+        graphics.drawString(font, "CLIENT EXPERIENCE  /  1.21.11", panelLeft + 18, panelTop + 32, 0xFF8BBF8D, false);
+        graphics.fill(right - 104, panelTop + 16, right - 18, panelTop + 37, 0xFF17271A);
+        graphics.drawCenteredString(font, "FABRIC CLIENT", right - 61, panelTop + 23, 0xFF9DD5A0);
         graphics.drawString(font, label(selected).toUpperCase(Locale.ROOT), contentLeft,
                 panelTop + 16, 0xFF39FF14, false);
         graphics.drawString(font, "A modular Minecraft client, built into a Fabric mod.",
