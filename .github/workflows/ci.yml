@@ -7,19 +7,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  android-shell:
+  upstream-android-launcher:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK packages
+        run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+      - name: Build upstream PojavLauncher APK
+        working-directory: android-launcher/upstream-pojav
+        run: |
+          chmod +x gradlew
+          ./gradlew :app_pojavlauncher:assembleDebug --stacktrace
+      - name: Upload debug APK
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
-          gradle-version: '8.13'
-      - name: Assemble Android shell
-        run: gradle -p android-launcher :app:assembleDebug
+          name: ar-client-upstream-debug
+          path: android-launcher/upstream-pojav/app_pojavlauncher/build/outputs/apk/debug/*.apk
 
   fabric-mod:
     runs-on: ubuntu-latest

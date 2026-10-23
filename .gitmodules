@@ -1,0 +1,3 @@
+[submodule "android-launcher/upstream-pojav"]
+	path = android-launcher/upstream-pojav
+	url = https://github.com/PojavLauncherTeam/PojavLauncher.git

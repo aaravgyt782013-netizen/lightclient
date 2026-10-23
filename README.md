@@ -1,39 +1,38 @@
 # Ar Client
 
-Ar Client is an original Android launcher experience for Minecraft: Java Edition, paired with an optional Fabric client mod.
+Ar Client is an independent Android launcher project for Minecraft: Java Edition.
 
-> **Current milestone:** repository reset and project scaffold. The Android home screen and the first Fabric HUD module are starter implementations; the upstream launcher runtime has not yet been integrated and no APK is claimed to be release-ready.
+## Runtime-first approach
 
-## Project layout
+The launcher runtime is sourced from the upstream [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) repository as a Git submodule under `android-launcher/upstream-pojav`, pinned to upstream commit `b12ad048157b3aa255d078c235dd4571e1900309`. This keeps the upstream launch pipeline, Java runtime setup, renderer/native components, and account flow as the foundation rather than pretending a standalone Compose screen can launch Minecraft.
 
-- `android-launcher/` — Kotlin, Jetpack Compose, Android application shell.
-- `client-mod/` — Java Fabric mod, initially targeting Minecraft 1.21.1.
-- `backend/` — optional REST API contract and service notes.
-- `docs/` — architecture, setup, licensing and compatibility notes.
+**Important:** PojavLauncher was archived in September 2025. The submodule is a reproducible starting point, not a claim that it builds with today's Android toolchain or is release-ready. CI will attempt to build the actual upstream launcher. Resolve build blockers and test on a real device before adding the branded UI.
 
-## Runtime foundation
+## Checkout
 
-Ar Client must build on an upstream Android Java launcher rather than reimplementing Java runtime setup, graphics translation, authentication, or Minecraft launching. Evaluate and integrate [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) or [ZalithLauncher](https://github.com/ZalithLauncher/ZalithLauncher) in the next integration stage. This scaffold intentionally does not pretend that a Compose shell alone can launch Minecraft.
+Clone recursively so the launcher source is present:
 
-## Requirements
+```bash
+git clone --recurse-submodules https://github.com/aaravgyt782013-netizen/lightclient.git
+```
 
-- Android Studio with Android SDK and JDK 17 for the Android module.
-- JDK 21 for the Fabric mod build (Minecraft 1.21.1).
-- Gradle wrapper should be generated/committed when the Android build is first run in Android Studio.
-- A legitimate Minecraft: Java Edition account and Microsoft sign-in through the integrated upstream launcher.
+If already cloned:
+
+```bash
+git submodule update --init --recursive
+```
+
+## Modules
+
+- `android-launcher/upstream-pojav/` — upstream Android launcher source (LGPL-3.0).
+- `client-mod/` — original Fabric mod scaffold (Minecraft 1.21.1 / Java 21).
+- `backend/` — optional API contract notes.
+- `docs/` — architecture, setup and licensing.
 
 ## Build
 
-Open `android-launcher/` in Android Studio to build the Android shell. Open `client-mod/` as a separate Gradle project to build the Fabric mod. See [docs/SETUP.md](docs/SETUP.md).
+See [docs/SETUP.md](docs/SETUP.md). Android runtime build is the priority. CI uses Java and Android SDK tooling to build the upstream Gradle project at `:app_pojavlauncher:assembleDebug`. Fabric mod builds separately.
 
-## Legal and distribution
+## Licensing
 
-Ar Client is an independent project and uses original branding. It does not include Minecraft game files, Microsoft credentials, or Feather Client assets. Review upstream launcher and dependency licenses before redistributing a combined build. See [docs/LICENSING.md](docs/LICENSING.md).
-
-## Roadmap
-
-1. Repository scaffold and architecture.
-2. Compose home screen and launcher settings.
-3. Fabric FPS/CPS HUD with draggable persisted layout.
-4. Integrate the upstream Android launcher, account flow, version/profile management and per-profile mod installation.
-5. Add touch-control editor, optional backend, CI builds and compatibility testing.
+Read [docs/LICENSING.md](docs/LICENSING.md) and the actual `android-launcher/upstream-pojav/LICENSE` before distributing. The PojavLauncher code is LGPL-3.0; bundled dependencies have separate licenses. No Minecraft game files are included by this project.
