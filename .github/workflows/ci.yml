@@ -17,9 +17,20 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      # GitHub-hosted Ubuntu images already include the Android SDK.
-      # Avoid setup-android's deprecated "tools" package install, which fails
-      # because that package no longer exists in current SDK repositories.
+      # The runner has Android SDK files, but sdkmanager may not be on PATH.
+      # Discover the installed command-line-tools version instead of assuming
+      # a fixed version or installing the removed legacy "tools" package.
+      - name: Locate Android SDK manager
+        shell: bash
+        run: |
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager -print -quit 2>/dev/null)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "::error::sdkmanager was not found under $SDK_ROOT/cmdline-tools"
+            exit 1
+          fi
+          echo "$(dirname "$SDKMANAGER")" >> "$GITHUB_PATH"
+          echo "Found sdkmanager at $SDKMANAGER"
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
       - name: Install Android SDK packages
