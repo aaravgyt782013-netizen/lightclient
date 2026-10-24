@@ -17,10 +17,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      # GitHub-hosted Ubuntu images already include the Android SDK.
+      # Avoid setup-android's deprecated "tools" package install, which fails
+      # because that package no longer exists in current SDK repositories.
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
       - name: Install Android SDK packages
         run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-      - name: Build upstream PojavLauncher APK
+      - name: Build Ar Client Android launcher fork
         working-directory: android-launcher/upstream-pojav
         run: |
           chmod +x gradlew
@@ -29,7 +33,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ar-client-upstream-debug
+          name: ar-client-android-debug
           path: android-launcher/upstream-pojav/app_pojavlauncher/build/outputs/apk/debug/*.apk
 
   fabric-mod:
